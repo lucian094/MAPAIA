@@ -1,0 +1,8 @@
+# Documentos de desarrollo (specs, planes, notas) — no forman parte del sitio publicado
+.dev/
+.superpowers/
+
+# Dependencias y build
+node_modules/
+dist/
+.astro/
