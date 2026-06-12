@@ -46,6 +46,27 @@ describe('compararPorLectura', () => {
     ]);
   });
 
+  it('ordena 02-pathing después de fundamentos y en orden de recorrido', () => {
+    const ids = [
+      '02-pathing/perfil-nativo',
+      '02-pathing/autoevaluacion',
+      '01-fundamentos/glosario',
+      '02-pathing/perfil-experimentado',
+      '02-pathing/perfil-explorador',
+      '02-pathing/README',
+      '02-pathing/perfil-inicial',
+    ];
+    expect([...ids].sort(compararPorLectura)).toEqual([
+      '01-fundamentos/glosario',
+      '02-pathing/README',
+      '02-pathing/autoevaluacion',
+      '02-pathing/perfil-explorador',
+      '02-pathing/perfil-inicial',
+      '02-pathing/perfil-experimentado',
+      '02-pathing/perfil-nativo',
+    ]);
+  });
+
   it('los ids desconocidos van después, en orden alfabético', () => {
     const ids = ['02-pathing/zeta', '02-pathing/alfa', '01-fundamentos/glosario'];
     expect([...ids].sort(compararPorLectura)).toEqual([

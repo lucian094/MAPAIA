@@ -11,11 +11,21 @@ const NOMBRES_SECCION: Record<string, string> = {
   '04-extensibilidad': 'Extensibilidad',
 };
 
-/** Orden de lectura sugerido. En Fase 3 esto se reemplaza por mapa.ts. */
+/**
+ * Orden de lectura sugerido para el índice de la portada. Incluye también
+ * los .md que no tienen estación en el mapa (README, autoevaluación,
+ * glosario), por eso no sale de src/data/mapa.ts.
+ */
 const ORDEN_LECTURA = [
   '01-fundamentos/que-son-los-agentes',
   '01-fundamentos/ecosistema',
   '01-fundamentos/glosario',
+  '02-pathing/README',
+  '02-pathing/autoevaluacion',
+  '02-pathing/perfil-explorador',
+  '02-pathing/perfil-inicial',
+  '02-pathing/perfil-experimentado',
+  '02-pathing/perfil-nativo',
 ];
 
 export function extraerTitulo(cuerpo: string): string | null {

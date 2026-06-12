@@ -187,7 +187,7 @@ intenta evitar.
 
 ## → Siguiente paso
 
-Con el vocabulario a mano, lo que sigue es encontrar tu ruta: la
-autoevaluación y los perfiles de `02-pathing/` (en construcción — llegan en la
-próxima fase). Si caíste acá directo, arrancá por
+Con el vocabulario a mano, lo que sigue es encontrar tu ruta: hacé la
+[autoevaluación](../02-pathing/autoevaluacion.md) y seguí el perfil que te
+toque. Si caíste acá directo, arrancá por
 [qué son los agentes](que-son-los-agentes.md).

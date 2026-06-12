@@ -1,34 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
+import MapaMetro from '../components/MapaMetro.astro';
 import Base from '../layouts/Base.astro';
 import { compararPorLectura, extraerTitulo, nombreSeccion } from '../lib/contenido';
+import { LINEAS } from '../data/mapa';
 import { unirRuta } from '../lib/rutas';
 
 const base = import.meta.env.BASE_URL;
-
-const lineas = [
-  {
-    id: 'inicial',
-    nombre: 'Línea Inicial',
-    color: 'var(--linea-inicial)',
-    para: 'Sabés programar pero todavía no trabajaste en entornos reales.',
-    foco: 'Desarrollar criterio y aprender a evaluar lo que el agente produce.',
-  },
-  {
-    id: 'experimentado',
-    nombre: 'Línea Experimentada',
-    color: 'var(--linea-experimentado)',
-    para: 'Tenés años de experiencia, pero la IA todavía no entró a tu flujo.',
-    foco: 'Integrar agentes sin perder control ni calidad.',
-  },
-  {
-    id: 'nativo',
-    nombre: 'Línea Nativa',
-    color: 'var(--linea-nativo)',
-    para: 'Ya usás agentes todos los días.',
-    foco: 'Sistematizar, medir, extender y contagiar al equipo.',
-  },
-];
 
 const entradas = await getCollection('contenido');
 const articulos = entradas
@@ -49,16 +27,18 @@ const secciones = [...new Set(articulos.map((articulo) => articulo.seccion))];
       Una metodología abierta para sumar agentes de inteligencia artificial a tu
       forma de desarrollar software, con rutas según tu punto de partida.
     </p>
-    <p class="cta-pendiente">
-      <span aria-hidden="true">🚧</span> El test de autoevaluación y el mapa interactivo están en construcción.
-      Mientras tanto, conocé las tres líneas:
+    <p class="acciones">
+      <a class="cta" href={unirRuta(base, 'test/')}>Hacé el test (2 min)</a>
+      <a class="cta-secundario" href="#mapa">o explorá el mapa ↓</a>
     </p>
   </section>
 
+  <MapaMetro />
+
   <section class="lineas">
     {
-      lineas.map((linea) => (
-        <article class="linea" style={`--color-linea: ${linea.color}`}>
+      LINEAS.map((linea) => (
+        <article class="linea" style={`--color-linea: var(${linea.colorVar})`}>
           <h2>{linea.nombre}</h2>
           <p class="para">{linea.para}</p>
           <p class="foco">{linea.foco}</p>
@@ -105,17 +85,41 @@ const secciones = [...new Set(articulos.map((articulo) => articulo.seccion))];
     margin: 0 auto;
   }
 
-  .cta-pendiente {
+  .acciones {
     margin-top: 1.5rem;
-    color: var(--accent);
-    font-size: 0.95rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .cta {
+    background: var(--accent);
+    color: var(--accent-text);
+    font-weight: 700;
+    text-decoration: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.5rem;
+  }
+
+  .cta:hover {
+    filter: brightness(1.1);
+  }
+
+  .cta-secundario {
+    color: var(--text-muted);
+  }
+
+  .cta-secundario:hover {
+    color: var(--text);
   }
 
   .lineas {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
     gap: 1rem;
-    padding: 1rem 0 2rem;
+    padding: 2rem 0;
   }
 
   .linea {

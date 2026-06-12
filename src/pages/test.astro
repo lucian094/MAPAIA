@@ -1,0 +1,244 @@
+---
+import Base from '../layouts/Base.astro';
+import { ESTACIONES, LINEAS } from '../data/mapa';
+import { PREGUNTA_PROGRAMA, PREGUNTAS } from '../data/quiz';
+import { unirRuta } from '../lib/rutas';
+
+const base = import.meta.env.BASE_URL;
+
+const porId = new Map(ESTACIONES.map((estacion) => [estacion.id, estacion]));
+const resultados = LINEAS.map((linea) => {
+  const cabecera = porId.get(linea.ruta[0] ?? '');
+  if (!cabecera) {
+    throw new Error(`La línea ${linea.perfil} no tiene estación cabecera en mapa.ts.`);
+  }
+  return { ...linea, articuloPerfil: cabecera.articulo };
+});
+---
+
+<Base
+  title="Test de perfil — MAPAIA"
+  description="Seis preguntas para encontrar tu ruta de adopción de agentes de IA: inicial, experimentada o nativa."
+>
+  <h1>¿Desde dónde arrancás?</h1>
+  <p class="intro">
+    Una pregunta de filtro y seis preguntas, dos minutos. No hay respuestas
+    correctas: es una foto de tu situación actual para recomendarte por dónde
+    empezar. Respondé pensando en tu semana típica, no en tu mejor día.
+  </p>
+
+  <noscript>
+    <p class="sin-js">
+      Esta versión interactiva necesita JavaScript. La
+      <a href={unirRuta(base, '02-pathing/autoevaluacion/')}>versión en texto</a>
+      se responde igual de bien con papel y lápiz.
+    </p>
+  </noscript>
+
+  <form id="quiz">
+    <fieldset class="filtro">
+      <legend>{PREGUNTA_PROGRAMA}</legend>
+      <label>
+        <input type="radio" name="programa" value="si" required />
+        <span>Sí</span>
+      </label>
+      <label>
+        <input type="radio" name="programa" value="no" required />
+        <span>Todavía no — los miro desde afuera del teclado</span>
+      </label>
+      <p class="nota-filtro" hidden>
+        Listo: tu perfil es el explorador, sin más preguntas (las de abajo
+        asumen que programás). Tocá «Ver mi línea».
+      </p>
+    </fieldset>
+    {
+      PREGUNTAS.map((pregunta, indice) => (
+        <fieldset data-grupo="quiz">
+          <legend>
+            {indice + 1}. {pregunta.texto}
+          </legend>
+          {pregunta.opciones.map((opcion) => (
+            <label>
+              <input type="radio" name={`pregunta-${indice}`} value={opcion.perfil} required />
+              <span>{opcion.texto}</span>
+            </label>
+          ))}
+        </fieldset>
+      ))
+    }
+    <button class="enviar" type="submit">Ver mi línea</button>
+  </form>
+
+  <section id="resultado" aria-live="polite">
+    {
+      resultados.map((resultado) => (
+        <div
+          class="panel"
+          data-resultado={resultado.perfil}
+          style={`--color-linea: var(${resultado.colorVar})`}
+          hidden
+        >
+          <p class="tu-linea">Tu línea es</p>
+          <h2>{resultado.nombre}</h2>
+          <p>{resultado.para}</p>
+          <p class="foco">{resultado.foco}</p>
+          <p class="acciones-resultado">
+            <a class="cta" href={`${unirRuta(base, '')}#mapa`}>Ver tu línea en el mapa</a>
+            <a href={unirRuta(base, `${resultado.articuloPerfil}/`)}>Leer tu perfil completo</a>
+          </p>
+          <p class="aviso">
+            Guardamos tu línea solo en este navegador. Podés cambiarla cuando
+            quieras desde el mapa: el test orienta, no encierra.
+          </p>
+        </div>
+      ))
+    }
+  </section>
+</Base>
+
+<script>
+  import { derivarPerfil } from '../data/quiz';
+  import { esPerfil, guardarPerfil, type Perfil } from '../lib/perfil';
+
+  const formulario = document.querySelector<HTMLFormElement>('#quiz');
+  const paneles = [...document.querySelectorAll<HTMLElement>('[data-resultado]')];
+  const grupos = [...document.querySelectorAll<HTMLFieldSetElement>('[data-grupo="quiz"]')];
+  const notaFiltro = document.querySelector<HTMLElement>('.nota-filtro');
+
+  // Quien no programa va directo al perfil explorador: las 6 preguntas se
+  // deshabilitan (y dejan de ser required) para no bloquear el envío.
+  formulario?.addEventListener('change', () => {
+    const noPrograma = new FormData(formulario).get('programa') === 'no';
+    for (const grupo of grupos) grupo.disabled = noPrograma;
+    if (notaFiltro) notaFiltro.hidden = !noPrograma;
+  });
+
+  formulario?.addEventListener('submit', (evento) => {
+    evento.preventDefault();
+    const datos = new FormData(formulario);
+    const perfil: Perfil =
+      datos.get('programa') === 'no'
+        ? 'explorador'
+        : derivarPerfil([...datos.values()].filter(esPerfil));
+    guardarPerfil(perfil);
+    for (const panel of paneles) {
+      panel.hidden = panel.dataset.resultado !== perfil;
+    }
+    document.querySelector('#resultado')?.scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+
+<style>
+  .intro,
+  .sin-js {
+    color: var(--text-muted);
+    max-width: 38rem;
+  }
+
+  fieldset {
+    margin: 1.25rem 0;
+    padding: 1rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+  }
+
+  legend {
+    font-weight: 700;
+    padding: 0 0.5rem;
+  }
+
+  .filtro {
+    border-color: var(--accent);
+  }
+
+  fieldset:disabled {
+    opacity: 0.45;
+  }
+
+  .nota-filtro {
+    margin: 0.5rem 0 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+  }
+
+  label {
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+    padding: 0.4rem 0;
+    cursor: pointer;
+  }
+
+  label:hover span {
+    color: var(--accent);
+  }
+
+  input[type='radio'] {
+    accent-color: var(--accent);
+  }
+
+  .enviar {
+    font: inherit;
+    font-weight: 700;
+    background: var(--accent);
+    color: var(--accent-text);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    cursor: pointer;
+  }
+
+  .enviar:hover {
+    filter: brightness(1.1);
+  }
+
+  .panel {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--color-linea);
+    border-radius: 0.5rem;
+  }
+
+  .tu-linea {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .panel h2 {
+    margin: 0.25rem 0 0.75rem;
+    color: var(--color-linea);
+  }
+
+  .foco {
+    color: var(--text-muted);
+  }
+
+  .acciones-resultado {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 1.25rem;
+  }
+
+  .cta {
+    background: var(--accent);
+    color: var(--accent-text);
+    font-weight: 700;
+    text-decoration: none;
+    padding: 0.5rem 1.1rem;
+    border-radius: 0.5rem;
+  }
+
+  .aviso {
+    margin-top: 1rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+</style>

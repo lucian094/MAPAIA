@@ -52,6 +52,23 @@ el log dice `Complete!`, el build fue exitoso aunque el exit code no sea 0.
   `src/lib/remark-links-md.ts` los reescribe a rutas del sitio en build.
 - **`01-fundamentos/glosario.md` tiene formato fijo** (cada término es `## ` +
   UN párrafo de texto plano): lo parsea `src/lib/glosario.ts` para `/glosario`.
+- **`src/data/mapa.ts` es la fuente única del mapa de metro** (líneas,
+  estaciones, rutas, posiciones de grilla). Agregar un `.md` de contenido
+  exige una estación ahí o una entrada en `SIN_ESTACION` — lo valida
+  `tests/mapa.test.ts` contra el filesystem. El SVG lo arma
+  `src/components/MapaMetro.astro` con la geometría pura de
+  `src/lib/mapa-svg.ts`.
+- **`src/data/quiz.ts`** tiene las preguntas del test (`/test`) y
+  `derivarPerfil` (función pura). **Las preguntas se espejan en
+  `02-pathing/autoevaluacion.md`**: si cambia una, cambiar la otra
+  (`tests/quiz.test.ts` valida la sincronía con espacios normalizados).
+- **El perfil del lector vive en localStorage** detrás de
+  `src/lib/perfil.ts` (guards: sin almacenamiento el sitio funciona igual,
+  solo que sin línea resaltada). Lo escriben el test y la leyenda del mapa.
+- **Los ids de la colección conservan la ruta real del `.md`** (sin
+  slugificar: `02-pathing/README`, con mayúsculas) vía `generateId` en
+  `src/content.config.ts` — los links reescritos dependen de eso y Pages es
+  case-sensitive.
 - Deploy automático a GitHub Pages en cada push a `main`
   (`.github/workflows/deploy.yml`). `base: /MAPAIA` está configurado en
   `astro.config.ts`: los links internos deben usar `import.meta.env.BASE_URL`
@@ -73,4 +90,4 @@ el log dice `Complete!`, el build fue exitoso aunque el exit code no sea 0.
 ## Construcción por fases
 
 El proyecto avanza en 6 fases con stop gates (revisión del autor entre fases).
-Estado: Fase 2 (fundamentos: contenido + render de artículos + glosario) — ver `.dev/plans/` para el plan vigente.
+Estado: Fase 3 (pathing: contenido de `02-pathing/` + mapa de metro + test de perfil) — ver `.dev/plans/` para el plan vigente.

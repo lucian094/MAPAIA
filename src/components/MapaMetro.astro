@@ -1,0 +1,224 @@
+---
+import { ESTACIONES, LINEAS } from '../data/mapa';
+import { coordenada, dimensiones, puntosPolilinea } from '../lib/mapa-svg';
+import { unirRuta } from '../lib/rutas';
+
+const base = import.meta.env.BASE_URL;
+const { ancho, alto } = dimensiones(ESTACIONES);
+
+// Pertenencia estación → líneas (para resaltar y dimensionar transbordos).
+const lineasDeEstacion = new Map<string, string[]>();
+for (const linea of LINEAS) {
+  for (const id of linea.ruta) {
+    lineasDeEstacion.set(id, [...(lineasDeEstacion.get(id) ?? []), linea.perfil]);
+  }
+}
+
+const trazos = LINEAS.map((linea, indice) => ({
+  perfil: linea.perfil,
+  colorVar: linea.colorVar,
+  puntos: puntosPolilinea(linea.ruta, ESTACIONES),
+  // Tramos compartidos en paralelo, no superpuestos (centrado entre líneas).
+  desplazamiento: (indice - (LINEAS.length - 1) / 2) * 5,
+}));
+
+const nodos = ESTACIONES.map((estacion) => {
+  const punto = coordenada(estacion);
+  const pertenece = lineasDeEstacion.get(estacion.id) ?? [];
+  return {
+    ...estacion,
+    punto,
+    esTransbordo: pertenece.length > 1,
+    clases: pertenece.map((perfil) => `de-${perfil}`).join(' '),
+  };
+});
+---
+
+<figure class="mapa" id="mapa" data-perfil="">
+  <figcaption class="titulo-mapa">El plano de la red</figcaption>
+  <svg
+    viewBox={`0 0 ${ancho} ${alto}`}
+    role="img"
+    aria-label="Mapa de metro de MAPAIA: tres líneas (Inicial, Experimentada y Nativa) que recorren los temas del contenido. Cada estación es un artículo."
+  >
+    {
+      trazos.map((trazo) => (
+        <polyline
+          class={`trazo trazo-${trazo.perfil}`}
+          points={trazo.puntos}
+          transform={`translate(0 ${trazo.desplazamiento})`}
+          style={`stroke: var(${trazo.colorVar})`}
+        />
+      ))
+    }
+    {
+      nodos.map((nodo) => (
+        <a class={`nodo ${nodo.clases}`} href={unirRuta(base, `${nodo.articulo}/`)}>
+          <title>{nodo.resumen}</title>
+          <circle
+            class="estacion"
+            cx={nodo.punto.x}
+            cy={nodo.punto.y}
+            r={nodo.esTransbordo ? 11 : 8}
+          />
+          <text class="etiqueta" x={nodo.punto.x} y={nodo.punto.y - 20} text-anchor="middle">
+            {nodo.nombre}
+          </text>
+        </a>
+      ))
+    }
+  </svg>
+  <div class="leyenda" role="group" aria-label="Elegí tu línea">
+    {
+      LINEAS.map((linea) => (
+        <button
+          type="button"
+          data-linea={linea.perfil}
+          aria-pressed="false"
+          style={`--color-linea: var(${linea.colorVar})`}
+        >
+          {linea.nombre}
+        </button>
+      ))
+    }
+    <button type="button" data-linea="" aria-pressed="false">Ver todas</button>
+  </div>
+  <p class="aviso">
+    Tu elección de línea se guarda solo en este navegador. ¿No sabés cuál es la
+    tuya? <a href={unirRuta(base, 'test/')}>Hacé el test</a>.
+  </p>
+</figure>
+
+<script>
+  import { esPerfil, guardarPerfil, leerPerfil, limpiarPerfil } from '../lib/perfil';
+
+  const mapa = document.querySelector<HTMLElement>('#mapa');
+  const botones = [...document.querySelectorAll<HTMLButtonElement>('.leyenda button')];
+
+  function aplicar(perfil: string): void {
+    mapa?.setAttribute('data-perfil', perfil);
+    for (const boton of botones) {
+      boton.setAttribute('aria-pressed', String((boton.dataset.linea ?? '') === perfil));
+    }
+  }
+
+  aplicar(leerPerfil() ?? '');
+
+  for (const boton of botones) {
+    boton.addEventListener('click', () => {
+      const linea = boton.dataset.linea ?? '';
+      if (esPerfil(linea)) guardarPerfil(linea);
+      else limpiarPerfil();
+      aplicar(linea);
+    });
+  }
+</script>
+
+<style>
+  .mapa {
+    margin: 0;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+  }
+
+  .titulo-mapa {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    max-width: 42rem;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .trazo {
+    fill: none;
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: opacity 0.25s ease;
+  }
+
+  .nodo {
+    transition: opacity 0.25s ease;
+  }
+
+  .estacion {
+    fill: var(--bg);
+    stroke: var(--text);
+    stroke-width: 3;
+  }
+
+  .etiqueta {
+    fill: var(--text);
+    font-size: 13px;
+    font-family: var(--font-sans);
+  }
+
+  .nodo:hover .etiqueta,
+  .nodo:focus .etiqueta {
+    fill: var(--accent);
+  }
+
+  .nodo:hover .estacion,
+  .nodo:focus .estacion {
+    stroke: var(--accent);
+  }
+
+  /* Resaltado: la línea elegida a todo color, el resto atenuado. */
+  .mapa[data-perfil='explorador'] .trazo:not(.trazo-explorador),
+  .mapa[data-perfil='inicial'] .trazo:not(.trazo-inicial),
+  .mapa[data-perfil='experimentado'] .trazo:not(.trazo-experimentado),
+  .mapa[data-perfil='nativo'] .trazo:not(.trazo-nativo) {
+    opacity: 0.15;
+  }
+
+  .mapa[data-perfil='explorador'] .nodo:not(.de-explorador),
+  .mapa[data-perfil='inicial'] .nodo:not(.de-inicial),
+  .mapa[data-perfil='experimentado'] .nodo:not(.de-experimentado),
+  .mapa[data-perfil='nativo'] .nodo:not(.de-nativo) {
+    opacity: 0.35;
+  }
+
+  .leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .leyenda button {
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--color-linea, var(--border));
+    border-radius: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+  }
+
+  .leyenda button:hover {
+    border-color: var(--text-muted);
+  }
+
+  .leyenda button[aria-pressed='true'] {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .aviso {
+    margin: 0.75rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+</style>

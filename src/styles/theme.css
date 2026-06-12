@@ -10,6 +10,7 @@
   --text-muted: #94a3b8;
 
   /* Líneas del metro (una por perfil) */
+  --linea-explorador: #fb7185;
   --linea-inicial: #34d399;
   --linea-experimentado: #38bdf8;
   --linea-nativo: #c084fc;
