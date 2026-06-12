@@ -24,6 +24,7 @@ El design doc principal: `.dev/specs/2026-06-12-mapaia-sitio-interactivo-design.
 - `npm run dev` — server de desarrollo (http://localhost:4321/MAPAIA/ — ojo con el base path)
 - `npm run build` — build a `dist/`
 - `npm run check` — chequeo de tipos (astro check)
+- `npm test` — tests de la lógica pura (Vitest, archivos en `tests/`)
 
 Nota Windows: al final de `astro build` puede aparecer `Assertion failed:
 !(handle->flags & UV_HANDLE_CLOSING)` (bug de libuv al cerrar el proceso). Si
@@ -40,11 +41,22 @@ el log dice `Complete!`, el build fue exitoso aunque el exit code no sea 0.
   nocturno"): nunca hardcodear colores en componentes, usar las custom
   properties (`--linea-inicial`, `--accent`, etc.).
 - **`src/layouts/Base.astro`** es el layout de todas las páginas (importa el
-  theme.css global en su frontmatter).
+  theme.css global en su frontmatter). `src/layouts/Articulo.astro` envuelve
+  los artículos de contenido (migas + estilos de prosa).
+- **La lógica pura vive en `src/lib/`** (parsing del glosario, títulos,
+  reescritura de links) separada del DOM, con tests en `tests/`. Los `.md` de
+  contenido NO llevan frontmatter: el título sale del primer `# encabezado`
+  (colección `contenido` en `src/content.config.ts`, glob loader sobre la raíz).
+- **Links internos entre `.md`:** se escriben relativos (p. ej.
+  `[glosario](glosario.md)`) para que funcionen en GitHub; el plugin remark
+  `src/lib/remark-links-md.ts` los reescribe a rutas del sitio en build.
+- **`01-fundamentos/glosario.md` tiene formato fijo** (cada término es `## ` +
+  UN párrafo de texto plano): lo parsea `src/lib/glosario.ts` para `/glosario`.
 - Deploy automático a GitHub Pages en cada push a `main`
   (`.github/workflows/deploy.yml`). `base: /MAPAIA` está configurado en
-  `astro.config.mjs`: los links internos deben usar `import.meta.env.BASE_URL`
-  (y recordar que las URLs de Pages son case-sensitive).
+  `astro.config.ts`: los links internos deben usar `import.meta.env.BASE_URL`
+  (helper `unirRuta` en `src/lib/rutas.ts`; recordar que las URLs de Pages son
+  case-sensitive).
 
 ## Reglas de contenido (OBLIGATORIAS)
 
@@ -61,4 +73,4 @@ el log dice `Complete!`, el build fue exitoso aunque el exit code no sea 0.
 ## Construcción por fases
 
 El proyecto avanza en 6 fases con stop gates (revisión del autor entre fases).
-Estado: Fase 1 (esqueleto + portada) — ver `.dev/plans/` para el plan vigente.
+Estado: Fase 2 (fundamentos: contenido + render de artículos + glosario) — ver `.dev/plans/` para el plan vigente.

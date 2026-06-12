@@ -1,0 +1,128 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  titulo: string;
+  seccion: string;
+}
+
+const { titulo, seccion } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title={`${titulo} — MAPAIA`}>
+  <nav class="migas" aria-label="Ubicación">
+    <a href={base}>← Inicio</a>
+    <span>{seccion}</span>
+  </nav>
+  <article class="articulo">
+    <slot />
+  </article>
+</Base>
+
+<style>
+  .migas {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .migas a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .migas a:hover {
+    color: var(--text);
+  }
+
+  .migas span {
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+</style>
+
+<style is:global>
+  /* Prosa de artículo: el HTML viene del Markdown renderizado, por eso
+     estos estilos son globales acotados a .articulo. Colores: solo custom
+     properties del tema (theme.css). */
+  .articulo h1 {
+    font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+    line-height: 1.25;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .articulo h2 {
+    margin-top: 2.25rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .articulo h3 {
+    margin-top: 1.5rem;
+  }
+
+  .articulo blockquote {
+    margin: 1rem 0;
+    padding: 0.25rem 1rem;
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    border-radius: 0 0.5rem 0.5rem 0;
+    color: var(--text-muted);
+  }
+
+  .articulo code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    padding: 0.1rem 0.35rem;
+  }
+
+  .articulo pre {
+    background: var(--surface) !important;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .articulo pre code {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .articulo table {
+    border-collapse: collapse;
+    margin: 1rem 0;
+    display: block;
+    overflow-x: auto;
+  }
+
+  .articulo th,
+  .articulo td {
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.65rem;
+    text-align: left;
+  }
+
+  .articulo th {
+    background: var(--surface);
+  }
+
+  .articulo hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  .articulo img {
+    max-width: 100%;
+  }
+</style>

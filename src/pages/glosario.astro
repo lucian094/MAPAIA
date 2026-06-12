@@ -1,0 +1,144 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { extraerTerminos, idTermino, normalizar } from '../lib/glosario';
+
+const entrada = await getEntry('contenido', '01-fundamentos/glosario');
+if (!entrada) {
+  throw new Error(
+    'Falta 01-fundamentos/glosario.md: la página /glosario se genera desde ese archivo.',
+  );
+}
+const terminos = extraerTerminos(entrada.body ?? '');
+---
+
+<Base
+  title="Glosario — MAPAIA"
+  description="Glosario de términos sobre agentes de IA: contexto, token, MCP, RAG, skill y más."
+>
+  <h1>Glosario</h1>
+  <p class="intro">
+    Los términos que se usan en todo MAPAIA, en orden alfabético. También podés
+    leerlo
+    <a href="https://github.com/lucian094/MAPAIA/blob/main/01-fundamentos/glosario.md"
+      >directo en GitHub</a
+    >.
+  </p>
+
+  <div class="buscador">
+    <input
+      id="busqueda"
+      type="search"
+      placeholder="Buscar término o definición…"
+      aria-label="Buscar en el glosario"
+      autocomplete="off"
+    />
+    <p id="resultado" role="status" aria-live="polite"></p>
+  </div>
+
+  <dl class="terminos">
+    {
+      terminos.map((t) => (
+        <div
+          class="termino"
+          id={idTermino(t.termino)}
+          data-buscable={normalizar(`${t.termino} ${t.definicion}`)}
+        >
+          <dt>{t.termino}</dt>
+          <dd>{t.definicion}</dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <p class="sin-resultados" id="sin-resultados" hidden>
+    Ningún término coincide con la búsqueda. Probá con menos letras.
+  </p>
+</Base>
+
+<script>
+  import { normalizar } from '../lib/glosario';
+
+  const campo = document.querySelector<HTMLInputElement>('#busqueda');
+  const resultado = document.querySelector<HTMLElement>('#resultado');
+  const sinResultados = document.querySelector<HTMLElement>('#sin-resultados');
+  const terminos = [...document.querySelectorAll<HTMLElement>('.termino')];
+
+  campo?.addEventListener('input', () => {
+    const consulta = normalizar(campo.value.trim());
+    let visibles = 0;
+    for (const termino of terminos) {
+      const coincide =
+        consulta === '' || (termino.dataset.buscable ?? '').includes(consulta);
+      termino.hidden = !coincide;
+      if (coincide) visibles += 1;
+    }
+    if (sinResultados) sinResultados.hidden = visibles > 0;
+    if (resultado) {
+      resultado.textContent =
+        consulta === '' ? '' : `${visibles} de ${terminos.length} términos`;
+    }
+  });
+</script>
+
+<style>
+  .intro {
+    color: var(--text-muted);
+  }
+
+  .buscador {
+    margin: 1.5rem 0 0.5rem;
+  }
+
+  #busqueda {
+    width: 100%;
+    max-width: 28rem;
+    padding: 0.6rem 0.9rem;
+    font: inherit;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+  }
+
+  #busqueda:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  #resultado {
+    min-height: 1.2rem;
+    margin: 0.5rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .terminos {
+    margin: 1rem 0 2rem;
+  }
+
+  .termino {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .termino dt {
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .termino dd {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  .termino:target dt {
+    color: var(--accent);
+  }
+
+  .sin-resultados {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 2rem 0;
+  }
+</style>

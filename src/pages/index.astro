@@ -1,5 +1,10 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import { compararPorLectura, extraerTitulo, nombreSeccion } from '../lib/contenido';
+import { unirRuta } from '../lib/rutas';
+
+const base = import.meta.env.BASE_URL;
 
 const lineas = [
   {
@@ -24,6 +29,17 @@ const lineas = [
     foco: 'Sistematizar, medir, extender y contagiar al equipo.',
   },
 ];
+
+const entradas = await getCollection('contenido');
+const articulos = entradas
+  .map((entrada) => ({
+    id: entrada.id,
+    seccion: entrada.id.split('/')[0] ?? '',
+    titulo: extraerTitulo(entrada.body ?? '') ?? entrada.id,
+  }))
+  .sort((a, b) => compararPorLectura(a.id, b.id));
+
+const secciones = [...new Set(articulos.map((articulo) => articulo.seccion))];
 ---
 
 <Base title="MAPAIA — Tu mapa para adoptar agentes de IA">
@@ -47,6 +63,26 @@ const lineas = [
           <p class="para">{linea.para}</p>
           <p class="foco">{linea.foco}</p>
         </article>
+      ))
+    }
+  </section>
+
+  <section class="contenido">
+    <h2>Explorá el contenido</h2>
+    {
+      secciones.map((seccion) => (
+        <div class="seccion">
+          <h3>{nombreSeccion(seccion)}</h3>
+          <ul>
+            {articulos
+              .filter((articulo) => articulo.seccion === seccion)
+              .map((articulo) => (
+                <li>
+                  <a href={unirRuta(base, `${articulo.id}/`)}>{articulo.titulo}</a>
+                </li>
+              ))}
+          </ul>
+        </div>
       ))
     }
   </section>
@@ -104,5 +140,31 @@ const lineas = [
     margin: 0;
     color: var(--text-muted);
     font-size: 0.9rem;
+  }
+
+  .contenido {
+    padding-bottom: 2rem;
+  }
+
+  .contenido h2 {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.3rem;
+  }
+
+  .seccion h3 {
+    margin: 1.25rem 0 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .seccion ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .seccion li {
+    margin: 0.3rem 0;
   }
 </style>

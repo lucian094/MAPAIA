@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import Articulo from '../layouts/Articulo.astro';
+import { extraerTitulo, nombreSeccion } from '../lib/contenido';
+
+export async function getStaticPaths() {
+  const entradas = await getCollection('contenido');
+  return entradas.map((entrada) => ({
+    params: { slug: entrada.id },
+    props: { entrada },
+  }));
+}
+
+interface Props {
+  entrada: CollectionEntry<'contenido'>;
+}
+
+const { entrada } = Astro.props;
+const { Content } = await render(entrada);
+const titulo = extraerTitulo(entrada.body ?? '') ?? entrada.id;
+const seccion = nombreSeccion(entrada.id.split('/')[0] ?? '');
+---
+
+<Articulo titulo={titulo} seccion={seccion}>
+  <Content />
+</Articulo>
