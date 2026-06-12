@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="Estación inexistente — MAPAIA">
+  <section class="estacion-404">
+    <p class="codigo">404</p>
+    <h1>Estación inexistente</h1>
+    <p>
+      Esta parada no figura en el plano. Quizás la movieron, quizás nunca
+      existió.
+    </p>
+    <a href={base}>← Volver al inicio</a>
+  </section>
+</Base>
+
+<style>
+  .estacion-404 {
+    text-align: center;
+    padding: 4rem 0;
+  }
+
+  .codigo {
+    font-family: var(--font-mono);
+    font-size: 3rem;
+    color: var(--accent);
+    margin: 0;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0.75rem;
+  }
+</style>

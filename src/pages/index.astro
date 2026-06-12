@@ -1,11 +1,108 @@
 ---
+import Base from '../layouts/Base.astro';
+
+const lineas = [
+  {
+    id: 'inicial',
+    nombre: 'Línea Inicial',
+    color: 'var(--linea-inicial)',
+    para: 'Sabés programar pero todavía no trabajaste en entornos reales.',
+    foco: 'Desarrollar criterio y aprender a evaluar lo que el agente produce.',
+  },
+  {
+    id: 'experimentado',
+    nombre: 'Línea Experimentada',
+    color: 'var(--linea-experimentado)',
+    para: 'Tenés años de experiencia, pero la IA todavía no entró a tu flujo.',
+    foco: 'Integrar agentes sin perder control ni calidad.',
+  },
+  {
+    id: 'nativo',
+    nombre: 'Línea Nativa',
+    color: 'var(--linea-nativo)',
+    para: 'Ya usás agentes todos los días.',
+    foco: 'Sistematizar, medir, extender y contagiar al equipo.',
+  },
+];
 ---
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <title>MAPAIA</title>
-  </head>
-  <body>
-    <h1>MAPAIA</h1>
-  </body>
-</html>
+
+<Base title="MAPAIA — Tu mapa para adoptar agentes de IA">
+  <section class="hero">
+    <h1>Tu mapa para adoptar agentes de IA</h1>
+    <p class="subtitulo">
+      Una metodología abierta para sumar agentes de inteligencia artificial a tu
+      forma de desarrollar software, con rutas según tu punto de partida.
+    </p>
+    <p class="cta-pendiente">
+      <span aria-hidden="true">🚧</span> El test de autoevaluación y el mapa interactivo están en construcción.
+      Mientras tanto, conocé las tres líneas:
+    </p>
+  </section>
+
+  <section class="lineas">
+    {
+      lineas.map((linea) => (
+        <article class="linea" style={`--color-linea: ${linea.color}`}>
+          <h2>{linea.nombre}</h2>
+          <p class="para">{linea.para}</p>
+          <p class="foco">{linea.foco}</p>
+        </article>
+      ))
+    }
+  </section>
+</Base>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 2.5rem 0 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    margin: 0 0 0.5rem;
+  }
+
+  .subtitulo {
+    color: var(--text-muted);
+    max-width: 38rem;
+    margin: 0 auto;
+  }
+
+  .cta-pendiente {
+    margin-top: 1.5rem;
+    color: var(--accent);
+    font-size: 0.95rem;
+  }
+
+  .lineas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1rem;
+    padding: 1rem 0 2rem;
+  }
+
+  .linea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--color-linea);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+  }
+
+  .linea h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    color: var(--color-linea);
+  }
+
+  .para {
+    margin: 0 0 0.5rem;
+  }
+
+  .foco {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+</style>
