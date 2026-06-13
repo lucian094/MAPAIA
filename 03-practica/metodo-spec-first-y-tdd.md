@@ -334,8 +334,7 @@ funciona: definir con precisión, verificar con rigor, auditar con criterio.
 
 ## → Siguiente paso
 
-El método describe cómo estructurar el trabajo individual. Lo que sigue es
-ver cómo ese trabajo se organiza en el proyecto: estructura de archivos,
-convenciones escritas, contexto que el agente recibe cada vez que arranca.
-Eso es arquitectura del proyecto con agentes →
-[Arquitectura](arquitectura.md).
+Desde acá, los caminos se separan de nuevo según tu experiencia:
+
+- Si estás siguiendo la **Línea Exploradora** o la **Línea Inicial**, lo que sigue es ver cómo el trabajo se organiza en el proyecto: estructura de archivos, convenciones escritas y contexto de inicio. Eso es la arquitectura del proyecto con agentes: → [Arquitectura](arquitectura.md).
+- Si venís por la **Línea Experimentada** o la **Línea Nativa**, tu flujo base ya está sólido. El próximo nivel es darle brazos a tu agente conectándolo con tus bases de datos y herramientas externas usando el protocolo estándar de la industria: → [Model Context Protocol (MCP)](../04-extensibilidad/mcp.md).

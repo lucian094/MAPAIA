@@ -1,0 +1,362 @@
+<!DOCTYPE html><html lang="es" data-astro-cid-5hce7sga> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Modelo de Adopción Progresiva de Agentes de Inteligencia Artificial"><title>01-fundamentos/ecosistema — MAPAIA</title><style data-vite-dev-id="C:/Github/MAPAIA/src/styles/theme.css">/* Tema "metro nocturno" — MAPAIA */
+:root {
+  /* Fondo y superficies */
+  --bg: #0b0e16;
+  --surface: #141927;
+  --border: #2a3247;
+
+  /* Texto */
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+
+  /* Líneas del metro (una por perfil) */
+  --linea-explorador: #fb7185;
+  --linea-inicial: #34d399;
+  --linea-experimentado: #38bdf8;
+  --linea-nativo: #c084fc;
+
+  /* Acento para CTAs */
+  --accent: #fbbf24;
+  --accent-text: #1c1917;
+
+  /* Tipografía */
+  --font-sans: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--accent);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+</style>
+<style data-vite-dev-id="C:/Github/MAPAIA/src/layouts/Base.astro?astro&#38;type=style&#38;index=0&#38;lang.css">header[data-astro-cid-5hce7sga]{display:flex;justify-content:space-between;align-items:center;padding:0.75rem 1.5rem;border-bottom:1px solid var(--border)}.logo[data-astro-cid-5hce7sga]{font-weight:800;font-size:1.1rem;color:var(--text);text-decoration:none;letter-spacing:0.03em}nav[data-astro-cid-5hce7sga]{display:flex;gap:1.25rem}nav[data-astro-cid-5hce7sga] a[data-astro-cid-5hce7sga]{color:var(--text-muted);text-decoration:none}nav[data-astro-cid-5hce7sga] a[data-astro-cid-5hce7sga]:hover{color:var(--text)}footer[data-astro-cid-5hce7sga]{border-top:1px solid var(--border);padding:1rem 1.5rem;color:var(--text-muted);font-size:0.85rem;text-align:center}</style>
+<style data-vite-dev-id="C:/Github/MAPAIA/src/layouts/Articulo.astro?astro&#38;type=style&#38;index=0&#38;lang.css">/* Prosa de artículo: el HTML viene del Markdown renderizado, por eso
+     estos estilos son globales acotados a .articulo. Colores: solo custom
+     properties del tema (theme.css). */
+  .articulo h1 {
+    font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+    line-height: 1.25;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .articulo h2 {
+    margin-top: 2.25rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .articulo h3 {
+    margin-top: 1.5rem;
+  }
+
+  .articulo blockquote {
+    margin: 1rem 0;
+    padding: 0.25rem 1rem;
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    border-radius: 0 0.5rem 0.5rem 0;
+    color: var(--text-muted);
+  }
+
+  .articulo code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    padding: 0.1rem 0.35rem;
+  }
+
+  .articulo pre {
+    background: var(--surface) !important;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .articulo pre code {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .articulo table {
+    border-collapse: collapse;
+    margin: 1rem 0;
+    display: block;
+    overflow-x: auto;
+  }
+
+  .articulo th,
+  .articulo td {
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.65rem;
+    text-align: left;
+  }
+
+  .articulo th {
+    background: var(--surface);
+  }
+
+  .articulo hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  .articulo img {
+    max-width: 100%;
+  }
+
+  /* Tooltips de glosario: el plugin remark-glosario envuelve la 1ª aparición
+     de cada término en un <a class="glosario-termino" data-definicion>. El
+     link al glosario es el fallback accesible; el tooltip es CSS puro. */
+  .articulo .glosario-termino {
+    color: var(--text);
+    text-decoration: underline dotted var(--accent);
+    text-underline-offset: 2px;
+    cursor: help;
+    position: relative;
+  }
+
+  .articulo .glosario-termino::after {
+    content: attr(data-definicion);
+    position: absolute;
+    left: 0;
+    bottom: 125%;
+    z-index: 5;
+    width: max-content;
+    max-width: min(22rem, 80vw);
+    padding: 0.5rem 0.7rem;
+    background: var(--surface);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 0.4rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+  }
+
+  .articulo .glosario-termino:hover::after,
+  .articulo .glosario-termino:focus::after {
+    opacity: 1;
+    visibility: visible;
+  }</style>
+<style data-vite-dev-id="C:/Github/MAPAIA/src/layouts/Articulo.astro?astro&#38;type=style&#38;index=1&#38;lang.css">.migas[data-astro-cid-iwv3pnfu]{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1rem;font-size:0.9rem}.migas[data-astro-cid-iwv3pnfu] a[data-astro-cid-iwv3pnfu]{color:var(--text-muted);text-decoration:none}.migas[data-astro-cid-iwv3pnfu] a[data-astro-cid-iwv3pnfu]:hover{color:var(--text)}.migas[data-astro-cid-iwv3pnfu] span[data-astro-cid-iwv3pnfu]{color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;font-size:0.75rem}</style>
+<style data-vite-dev-id="C:/Github/MAPAIA/src/components/ProgresoArticulo.astro?astro&#38;type=style&#38;index=0&#38;lang.css">.progreso-articulo[data-astro-cid-u2qf754d]{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:center;gap:0.75rem}.btn-visita[data-astro-cid-u2qf754d]{font:inherit;font-size:0.9rem;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:0.4rem;padding:0.45rem 1rem;cursor:pointer;transition:border-color 0.15s ease,color 0.15s ease,background 0.15s ease}.btn-visita[data-astro-cid-u2qf754d]:hover{border-color:var(--text-muted)}.btn-visita[data-astro-cid-u2qf754d]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.btn-visita[data-astro-cid-u2qf754d][aria-pressed=true]{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}.btn-visita[data-astro-cid-u2qf754d][aria-pressed=true]:hover{border-color:var(--text-muted)}.aviso-privacidad[data-astro-cid-u2qf754d]{margin:0;color:var(--text-muted);font-size:0.78rem}</style>
+<style data-vite-dev-id="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro?astro&#38;type=style&#38;index=0&#38;lang.css">#siguiente-paso-dinamico[data-astro-cid-mk3oq53g]{margin-top:3rem}#paso-con-perfil[data-astro-cid-mk3oq53g] h2[data-astro-cid-mk3oq53g]{margin-bottom:1.5rem}.btn-siguiente[data-astro-cid-mk3oq53g]{display:flex;flex-direction:column;padding:1.25rem 1.5rem;background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--color-linea, var(--border));border-radius:0.5rem;text-decoration:none;color:var(--text);transition:transform 0.15s ease,border-color 0.15s ease,box-shadow 0.15s ease;position:relative;overflow:hidden}.btn-siguiente[data-astro-cid-mk3oq53g]:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1);border-color:var(--color-linea, var(--text-muted))}.etiqueta-linea[data-astro-cid-mk3oq53g]{font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem}.nombre-estacion[data-astro-cid-mk3oq53g]{font-size:1.2rem;font-weight:600;color:var(--color-linea, var(--text))}.flecha[data-astro-cid-mk3oq53g]{position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:1.5rem;color:var(--color-linea, var(--text-muted));transition:transform 0.2s ease}.btn-siguiente[data-astro-cid-mk3oq53g]:hover .flecha[data-astro-cid-mk3oq53g]{transform:translate(4px,-50%)}.invitacion-test[data-astro-cid-mk3oq53g]{background:color-mix(in srgb,var(--accent) 10%,var(--surface));border:1px solid var(--border);border-left:4px solid var(--accent);padding:1.25rem;border-radius:0.5rem;margin-top:1.5rem}.invitacion-test[data-astro-cid-mk3oq53g] p[data-astro-cid-mk3oq53g]{margin:0 0 0.5rem 0}.invitacion-test[data-astro-cid-mk3oq53g] p[data-astro-cid-mk3oq53g]:last-of-type{margin-bottom:1rem;color:var(--text-muted);font-size:0.9rem}.btn-test[data-astro-cid-mk3oq53g]{display:inline-block;background:var(--accent);color:var(--accent-text);padding:0.4rem 1rem;border-radius:0.35rem;text-decoration:none;font-size:0.9rem;font-weight:600;transition:opacity 0.15s ease}.btn-test[data-astro-cid-mk3oq53g]:hover{opacity:0.9}</style><script type="module" src="/@vite/client"></script>
+<script type="module" src="/@fs/C:/Github/MAPAIA/node_modules/astro/dist/runtime/client/dev-toolbar/entrypoint.js?v=80b7b5c5"></script>
+<script>window.__astro_dev_toolbar__ = {"root":"C:\\Github\\MAPAIA\\","version":"5.18.2","debugInfo":"Astro                    v5.18.2\nNode                     v24.14.1\nSystem                   Windows (x64)\nPackage Manager          npm\nOutput                   static\nAdapter                  none\nIntegrations             none"}</script>
+<script type="module" src="/src/styles/theme.css"></script>
+<script type="module" src="/src/layouts/Base.astro?astro&type=style&index=0&lang.css"></script>
+<script type="module" src="/src/layouts/Articulo.astro?astro&type=style&index=0&lang.css"></script>
+<script type="module" src="/src/layouts/Articulo.astro?astro&type=style&index=1&lang.css"></script>
+<script type="module" src="/src/components/ProgresoArticulo.astro?astro&type=style&index=0&lang.css"></script>
+<script type="module" src="/src/components/SiguientePasoDinamico.astro?astro&type=style&index=0&lang.css"></script></head> <body data-astro-cid-5hce7sga data-astro-source-file="C:/Github/MAPAIA/src/layouts/Base.astro" data-astro-source-loc="25:9"> <header data-astro-cid-5hce7sga data-astro-source-file="C:/Github/MAPAIA/src/layouts/Base.astro" data-astro-source-loc="26:13"> <a class="logo" href="/MAPAIA" data-astro-cid-5hce7sga data-astro-source-file="C:/Github/MAPAIA/src/layouts/Base.astro" data-astro-source-loc="27:36"><span aria-hidden="true" data-astro-cid-5hce7sga data-astro-source-file="C:/Github/MAPAIA/src/layouts/Base.astro" data-astro-source-loc="27:60">🚇</span> MAPAIA</a> <nav data-astro-cid-5hce7sga data-astro-source-file="C:/Github/MAPAIA/src/layouts/Base.astro" data-astro-source-loc="28:12"> <a href="/MAPAIA/glosario/" data-astro-cid-5hce7sga data-astro-source-file="C:/Github/MAPAIA/src/layouts/Base.astro" data-astro-source-loc="29:47">Glosario</a> <a href="https://github.com/lucian094/MAPAIA" data-astro-cid-5hce7sga data-astro-source-file="C:/Github/MAPAIA/src/layouts/Base.astro" data-astro-source-loc="30:55">GitHub</a> </nav> </header> <main data-astro-cid-5hce7sga data-astro-source-file="C:/Github/MAPAIA/src/layouts/Base.astro" data-astro-source-loc="33:11">  <nav class="migas" aria-label="Ubicación" data-astro-cid-iwv3pnfu data-astro-source-file="C:/Github/MAPAIA/src/layouts/Articulo.astro" data-astro-source-loc="14:45"> <a href="/MAPAIA" data-astro-cid-iwv3pnfu data-astro-source-file="C:/Github/MAPAIA/src/layouts/Articulo.astro" data-astro-source-loc="15:20">← Inicio</a> <span data-astro-cid-iwv3pnfu data-astro-source-file="C:/Github/MAPAIA/src/layouts/Articulo.astro" data-astro-source-loc="16:11">Fundamentos</span> </nav> <article class="articulo" data-astro-cid-iwv3pnfu data-astro-source-file="C:/Github/MAPAIA/src/layouts/Articulo.astro" data-astro-source-loc="18:29">  <h1 id="el-ecosistema-de-herramientas">El ecosistema de herramientas</h1>
+<blockquote>
+<p><strong>Última actualización:</strong> junio de 2026</p>
+<p>Este es el único archivo de MAPAIA con información volátil: nombres,
+productos y modalidades cambian seguido. Si encontrás algo desactualizado,
+<a href="https://github.com/lucian094/MAPAIA/blob/main/CONTRIBUTING.md">contribuir es bienvenido</a>.</p>
+</blockquote>
+<p>Elegir herramienta paraliza más de lo que debería. La buena noticia: la
+categoría importa más que la marca, y los conceptos que vas a aprender en
+MAPAIA (<a href="/MAPAIA/01-fundamentos/glosario/#contexto" class="glosario-termino" data-definicion="Todo el texto que el modelo tiene disponible al momento de generar una respuesta: la conversación previa, los archivos que leyó, las instrucciones de sistema, los resultados de comandos. Es el recurso más escaso al trabajar con agentes; administrarlo bien es una de las habilidades centrales que enseña MAPAIA.">contexto</a>, <a href="/MAPAIA/01-fundamentos/glosario/#prompt" class="glosario-termino" data-definicion="El texto que le das al modelo para pedirle algo: la pregunta, la instrucción, la tarea. Su calidad determina buena parte de la calidad de la respuesta, y por eso escribirlos bien es una habilidad en sí misma.">prompts</a>, verificación) se transfieren de una herramienta a
+otra casi sin pérdida. Este archivo te da el mapa para ubicarte y un criterio
+para arrancar.</p>
+<h2 id="cómo-leer-este-mapa">Cómo leer este mapa</h2>
+<p>Las herramientas se agrupan por <strong>formato</strong>, es decir, por dónde y cómo las
+usás. Eso define la experiencia mucho más que el modelo que tengan abajo:</p>
+<ol>
+<li><strong><a href="/MAPAIA/01-fundamentos/glosario/#agente" class="glosario-termino" data-definicion="Programa que usa un modelo de lenguaje dentro de un loop de percibir, razonar y actuar: lee archivos, ejecuta comandos, edita código y evalúa los resultados para decidir el próximo paso, todo bajo supervisión humana. Se diferencia del chatbot en que actúa sobre tu proyecto en lugar de solo conversar.">Agentes</a> de línea de comandos (CLI)</strong> — viven en la terminal.</li>
+<li><strong>Extensiones para tu editor</strong> — se suman al editor que ya usás.</li>
+<li><strong>IDEs con IA nativa</strong> — editores diseñados alrededor de la IA.</li>
+<li><strong>Opciones gratuitas y open source</strong> — para presupuesto cero o control total.</li>
+</ol>
+<p>Casi todas las opciones comerciales tienen prueba gratuita o un tier gratis
+limitado. Los precios cambian demasiado seguido para listarlos acá: consultá
+las páginas oficiales.</p>
+<h2 id="agentes-de-línea-de-comandos-cli">Agentes de línea de comandos (CLI)</h2>
+<p>Corren en la terminal, operan sobre la carpeta del proyecto y son el formato
+más “agéntico” de todos: leen archivos, ejecutan comandos y editan código con
+tu supervisión. También son los más fáciles de automatizar (scripts, CI).</p>
+<ul>
+<li><strong>Claude Code</strong> (Anthropic). El agente CLI de referencia. Fuerte en tareas
+largas con supervisión, sistema de permisos granular, extensible con <a href="/MAPAIA/01-fundamentos/glosario/#skill" class="glosario-termino" data-definicion="Paquete de instrucciones y recursos que le enseña a un agente a ejecutar una tarea específica de forma repetible: cómo revisar un PR, cómo armar un reporte, cómo desplegar. Se escribe una vez y el agente la carga cuando la necesita. Tiene su propio archivo en la sección de extensibilidad.">skills</a>
+y <a href="/MAPAIA/01-fundamentos/glosario/#mcp-model-context-protocol" class="glosario-termino" data-definicion="Protocolo abierto que estandariza cómo un agente se conecta con herramientas y fuentes de datos externas: bases de datos, navegadores, APIs, sistemas internos. Funciona como un enchufe universal: cualquier cliente MCP puede usar cualquier servidor MCP. Tiene su propio archivo en la sección de extensibilidad.">MCP</a>. Funciona también como extensión de VS Code y JetBrains.</li>
+<li><strong>Codex CLI</strong> (OpenAI). El equivalente del lado de OpenAI, open source.
+Integración natural con el ecosistema de ChatGPT.</li>
+<li><strong>Gemini CLI</strong> (Google). Open source y con un tier gratuito generoso, lo
+que lo vuelve un buen punto de entrada sin tarjeta de crédito.</li>
+</ul>
+<p><strong>Elegí CLI si:</strong> vivís en la terminal, querés automatizar tareas con agentes
+o trabajás en proyectos donde el editor es lo de menos.</p>
+<h2 id="extensiones-para-tu-editor">Extensiones para tu editor</h2>
+<p>Si ya tenés tu editor configurado a gusto, una extensión suma IA sin mudanza.
+Todas las de esta lista hoy incluyen un modo agente además del autocompletado
+clásico.</p>
+<ul>
+<li><strong>GitHub Copilot</strong> (GitHub/Microsoft). La más extendida. Autocompletado,
+chat y modo agente dentro de VS Code, JetBrains y otros editores. Si tu
+equipo ya paga GitHub, suele ser el primer paso natural.</li>
+<li><strong>Cline</strong>. Open source. Un agente completo dentro de VS Code, con la
+particularidad de que vos ponés la <a href="/MAPAIA/01-fundamentos/glosario/#api-key" class="glosario-termino" data-definicion="Credencial secreta que identifica tus llamadas a la API de un proveedor de modelos y permite cobrarlas. La piden las herramientas &#x22;bring your own key&#x22; como Cline o Continue. Tratala como una contraseña: nunca se commitea al repositorio.">API key</a> del modelo que quieras (Claude,
+GPT, Gemini, DeepSeek o un modelo local).</li>
+<li><strong>Continue</strong>. Open source. Asistente configurable para VS Code y JetBrains,
+también con modelo a elección. Popular para armar setups a medida.</li>
+</ul>
+<p><strong>Elegí extensión si:</strong> tu editor actual no se negocia, o querés probar IA
+con el mínimo cambio de hábitos posible.</p>
+<h2 id="ides-con-ia-nativa">IDEs con IA nativa</h2>
+<p>Editores construidos (o reconstruidos) alrededor de la IA. La integración es
+más profunda que la de una extensión: el contexto del proyecto, el chat y las
+ediciones multiarchivo se sienten parte del editor y no un agregado.</p>
+<ul>
+<li><strong>Cursor</strong>. Un fork de VS Code rediseñado alrededor de la IA. El más
+conocido de la categoría; si venís de VS Code, la transición es corta.</li>
+<li><strong>Windsurf</strong>. Apuesta similar, con foco en flujos agénticos dentro del
+editor.</li>
+<li><strong>Antigravity</strong> (Google). El entorno agéntico de Google: orientado a
+supervisar agentes trabajando, más que a escribir cada línea.</li>
+</ul>
+<p><strong>Elegí IDE con IA si:</strong> querés la experiencia más integrada y no te pesa
+cambiar de editor.</p>
+<h2 id="opciones-gratuitas-y-open-source">Opciones gratuitas y open source</h2>
+<p>Presupuesto cero no te deja afuera; te cambia el menú.</p>
+<ul>
+<li><strong>Ollama</strong>. Ejecuta modelos open weights en tu máquina: nada sale de tu
+computadora, costo cero por <a href="/MAPAIA/01-fundamentos/glosario/#token" class="glosario-termino" data-definicion="La unidad mínima de texto con la que opera un modelo: una palabra corta, un pedazo de palabra, un signo. Como referencia gruesa, en español una palabra promedia entre uno y dos tokens. Importa porque todo se mide y se cobra en tokens: el contexto disponible, el costo por consulta, los límites de uso.">token</a>. Necesitás hardware decente y aceptar
+que los modelos locales rinden por debajo de los comerciales grandes.</li>
+<li><strong>Modelos open weights</strong> (las familias Llama, Qwen, DeepSeek y compañía).
+Son los modelos que herramientas como Ollama, Cline o Continue te dejan
+enchufar. La brecha con los modelos comerciales se achica cada año.</li>
+<li><strong>DeepSeek</strong>. Modelos potentes con API de costo muy bajo y versiones open
+weights: la opción frecuente para experimentar con presupuesto mínimo.</li>
+<li><strong>OpenClaw</strong>. Asistente agéntico open source que se conecta al modelo que
+elijas. Más experimental, pero buen ejemplo de hacia dónde va el software
+de agentes fuera de las empresas grandes.</li>
+<li>Los <strong>tiers gratuitos</strong> de las herramientas comerciales (Gemini CLI es el
+más generoso al cierre de esta edición) alcanzan de sobra para aprender.</li>
+</ul>
+<p><strong>Elegí esta vía si:</strong> el presupuesto es cero, tus datos no pueden salir de
+tu máquina, o simplemente querés entender el stack hasta abajo.</p>
+<h2 id="y-los-chatbots-de-propósito-general">¿Y los chatbots de propósito general?</h2>
+<p>Claude, ChatGPT y Gemini en sus versiones web no son herramientas de
+desarrollo, pero siguen teniendo un lugar en el flujo: pensar un diseño en
+borrador, entender un concepto nuevo, discutir alternativas antes de escribir
+una línea. La regla práctica es simple: <strong>el chat para conversar ideas, el
+agente para trabajar sobre el repo</strong>. Lo que no conviene es usarlos como
+editor de código a fuerza de copiar y pegar — para eso ya existen las
+categorías de arriba, que ven tu proyecto de verdad.</p>
+<h2 id="criterios-para-elegir-en-este-orden">Criterios para elegir (en este orden)</h2>
+<ol>
+<li><strong>Presupuesto.</strong> ¿Hay plata para una suscripción? Si no, arrancá por los
+tiers gratuitos u open source. Aprender no requiere pagar.</li>
+<li><strong>Privacidad.</strong> ¿Tu código puede viajar a una API externa? Si la respuesta
+es no (regulación, contratos), tu camino son los modelos locales.</li>
+<li><strong>Tu flujo actual.</strong> ¿Terminal o editor? ¿VS Code o JetBrains? La mejor
+herramienta es la que se mete en tu flujo sin pelearlo.</li>
+<li><strong>El equipo.</strong> Si tu equipo ya estandarizó una herramienta, empezá por esa:
+el conocimiento compartido vale más que una feature extra.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Tu situación</th><th>Punto de partida razonable</th></tr></thead><tbody><tr><td>Ya tenés GitHub Copilot por tu cuenta o por tu equipo</td><td>Activá su modo agente y exprimilo</td></tr><tr><td>Vivís en la terminal</td><td>Un agente CLI (Claude Code, Codex CLI, Gemini CLI)</td></tr><tr><td>Presupuesto cero, sin restricciones de datos</td><td>Gemini CLI gratis, o Cline + DeepSeek</td></tr><tr><td>Tus datos no pueden salir de tu máquina</td><td>Ollama + un <a href="/MAPAIA/01-fundamentos/glosario/#modelo-open-weights" class="glosario-termino" data-definicion="Modelo cuyos pesos se publican para descargar y ejecutar en infraestructura propia, sin depender de una API externa. Las familias Llama, Qwen o DeepSeek son ejemplos. La opción cuando los datos no pueden salir de tu máquina o el presupuesto es cero.">modelo open weights</a></td></tr><tr><td>Querés la experiencia integrada máxima</td><td>Cursor, Windsurf o Antigravity</td></tr></tbody></table>
+<h2 id="lo-que-no-importa-tanto">Lo que no importa tanto</h2>
+<ul>
+<li><strong>La marca exacta.</strong> Las categorías son estables; los líderes de cada una
+rotan. Lo que aprendas en una herramienta se transfiere a la siguiente.</li>
+<li><strong>Los benchmarks de marketing.</strong> Cada lanzamiento “supera a todos los
+anteriores”. Tu benchmark real es tu proyecto y tu flujo de trabajo.</li>
+<li><strong>Cambiar de herramienta cada semana.</strong> El costo de aprender bien una
+supera la ganancia marginal de la novedad. Elegí una, usala un mes en
+serio, recién después evaluá.</li>
+</ul>
+<p>El resto de MAPAIA es deliberadamente agnóstico de herramienta: todo lo que
+sigue aplica a cualquiera de las opciones de este archivo.</p>
+<h2 id="cómo-probar-una-herramienta-sin-perder-la-semana">Cómo probar una herramienta (sin perder la semana)</h2>
+<p>Bajar algo y “ver qué onda” durante quince minutos no es una evaluación. Una
+prueba que sí te dice algo:</p>
+<ol>
+<li><strong>Elegí un proyecto real</strong>, no un TODO list de juguete: una herramienta
+brilla u opaca según el contexto que tiene que manejar.</li>
+<li><strong>Dale tres tareas de dificultad creciente</strong>: un bug acotado, un test para
+código existente, una feature chica de punta a punta.</li>
+<li><strong>Medí lo que te importa</strong>: ¿el resultado era correcto? ¿cuánto tuviste
+que retocar? ¿entendiste lo que hizo y por qué?</li>
+<li><strong>Sostenelo una semana</strong> antes de opinar: las primeras horas con cualquier
+agente son las peores, porque todavía no sabés pedir.</li>
+</ol>
+<p>Y anotá lo que encuentres — qué pedidos funcionaron, dónde tropezó, qué
+tuviste que aclarar dos veces. Ese registro es el embrión de los archivos de
+contexto que vas a ver en la sección de práctica.</p>
+<h2 id="-siguiente-paso">→ Siguiente paso</h2>
+<p>Antes de meterte en las rutas por perfil, asegurate el vocabulario: el
+<a href="/MAPAIA/01-fundamentos/glosario/">glosario</a> junta todos los términos que MAPAIA usa de acá en
+adelante.</p> <div class="progreso-articulo" data-estacion="ecosistema" hidden data-astro-cid-u2qf754d data-astro-source-file="C:/Github/MAPAIA/src/components/ProgresoArticulo.astro" data-astro-source-loc="10:66"> <button type="button" class="btn-visita" aria-pressed="false" data-astro-cid-u2qf754d data-astro-source-file="C:/Github/MAPAIA/src/components/ProgresoArticulo.astro" data-astro-source-loc="11:65">
+Marcar como visitada
+</button> <p class="aviso-privacidad" data-astro-cid-u2qf754d data-astro-source-file="C:/Github/MAPAIA/src/components/ProgresoArticulo.astro" data-astro-source-loc="14:31">Tu progreso se guarda solo en este navegador.</p> </div> <script type="module" src="/src/components/ProgresoArticulo.astro?astro&type=script&index=0&lang.ts"></script> <div id="siguiente-paso-dinamico" data-siguientes="{&#34;explorador&#34;:{&#34;nombre&#34;:&#34;Prompts&#34;,&#34;url&#34;:&#34;/MAPAIA/03-practica/ingenieria-de-prompts/&#34;,&#34;lineaNombre&#34;:&#34;Línea Exploradora&#34;,&#34;colorVar&#34;:&#34;--linea-explorador&#34;},&#34;inicial&#34;:{&#34;nombre&#34;:&#34;Prompts&#34;,&#34;url&#34;:&#34;/MAPAIA/03-practica/ingenieria-de-prompts/&#34;,&#34;lineaNombre&#34;:&#34;Línea Inicial&#34;,&#34;colorVar&#34;:&#34;--linea-inicial&#34;},&#34;experimentado&#34;:{&#34;nombre&#34;:&#34;Contexto&#34;,&#34;url&#34;:&#34;/MAPAIA/03-practica/contexto-y-estructura/&#34;,&#34;lineaNombre&#34;:&#34;Línea Experimentada&#34;,&#34;colorVar&#34;:&#34;--linea-experimentado&#34;},&#34;nativo&#34;:{&#34;nombre&#34;:&#34;Contexto&#34;,&#34;url&#34;:&#34;/MAPAIA/03-practica/contexto-y-estructura/&#34;,&#34;lineaNombre&#34;:&#34;Línea Nativa&#34;,&#34;colorVar&#34;:&#34;--linea-nativo&#34;}}" data-test-url="/MAPAIA/test/" hidden data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="19:111"> <div id="paso-con-perfil" hidden data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="20:36"> <h2 id="titulo-siguiente" data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="21:31">→ Siguiente paso</h2> <a id="link-siguiente" href="#" class="btn-siguiente" data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="22:59"> <span class="etiqueta-linea" id="etiqueta-linea" data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="23:8"></span> <span class="nombre-estacion" id="nombre-estacion" data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="24:8"></span> <span aria-hidden="true" class="flecha" data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="25:47">→</span> </a> </div> <div id="paso-sin-perfil" hidden data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="28:36"> <div class="invitacion-test" data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="29:34"> <p data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="30:10">💡 <strong data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="30:21">¿Querés ver tu ruta personalizada?</strong></p> <p data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="31:10">Hacé el test de 2 minutos para descubrir qué perfil sos y cuál es tu próxima parada recomendada.</p> <a href="/MAPAIA/test/" class="btn-test" data-astro-cid-mk3oq53g data-astro-source-file="C:/Github/MAPAIA/src/components/SiguientePasoDinamico.astro" data-astro-source-loc="32:42">Hacer el test</a> </div> </div> </div> <script type="module" src="/src/components/SiguientePasoDinamico.astro?astro&type=script&index=0&lang.ts"></script>  </article>  </main> <footer data-astro-cid-5hce7sga data-astro-source-file="C:/Github/MAPAIA/src/layouts/Base.astro" data-astro-source-loc="36:13"> <p data-astro-cid-5hce7sga data-astro-source-file="C:/Github/MAPAIA/src/layouts/Base.astro" data-astro-source-loc="37:10">
+MAPAIA — contenido abierto bajo licencia CC BY-NC 4.0 · Luciano Iván Alvarez
+</p> </footer> </body></html>  

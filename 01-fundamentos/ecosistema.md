@@ -160,6 +160,9 @@ contexto que vas a ver en la sección de práctica.
 
 ## → Siguiente paso
 
-Antes de meterte en las rutas por perfil, asegurate el vocabulario: el
-[glosario](glosario.md) junta todos los términos que MAPAIA usa de acá en
-adelante.
+Desde acá, los caminos se bifurcan según tu punto de partida:
+
+- Si estás siguiendo la **Línea Exploradora** o la **Línea Inicial**, tu próxima parada es entender cómo pedirle cosas a los modelos: → [Ingeniería de prompts](../03-practica/ingenieria-de-prompts.md).
+- Si venís por la **Línea Experimentada** o la **Línea Nativa**, ya sabés escribir prompts. Tu próximo paso es entender cómo estructurar proyectos: → [Contexto y estructura](../03-practica/contexto-y-estructura.md).
+
+*(Si en algún momento te perdés con los términos, tenés el [glosario](glosario.md) a mano).*

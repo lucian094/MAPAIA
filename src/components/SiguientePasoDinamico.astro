@@ -56,28 +56,26 @@ const testUrl = unirRuta(import.meta.env.BASE_URL, 'test/');
     }
 
     if (lastHeader) {
-      // Ocultar el h2 estático y todo lo que le sigue
-      let nodo: Element | null = lastHeader;
-      while (nodo) {
-        if (nodo.id === 'siguiente-paso-dinamico') {
-          // Si nos topamos con nuestro propio contenedor, dejamos de ocultar
-          break;
-        }
-        (nodo as HTMLElement).style.display = 'none';
-        nodo = nodo.nextElementSibling;
-      }
-
-      // Mostrar nuestro contenedor dinámico
-      contenedor.hidden = false;
-
       const divConPerfil = document.getElementById('paso-con-perfil');
       const divSinPerfil = document.getElementById('paso-sin-perfil');
       
       const datoSiguiente = perfil ? siguientes[perfil] : null;
 
-      if (perfil && datoSiguiente) {
-        // Tiene perfil y hay una próxima estación en su línea
-        if (divConPerfil) {
+      if (perfil) {
+        // Solo ocultamos el texto estático si el usuario tiene un perfil y 
+        // le vamos a mostrar el botón dinámico gigante.
+        let nodo: Element | null = lastHeader;
+        while (nodo) {
+          if (nodo.id === 'siguiente-paso-dinamico') break;
+          if (!nodo.classList.contains('progreso-articulo')) {
+            (nodo as HTMLElement).style.display = 'none';
+          }
+          nodo = nodo.nextElementSibling;
+        }
+
+        if (datoSiguiente && divConPerfil) {
+          // Mostrar nuestro contenedor dinámico
+          contenedor.hidden = false;
           divConPerfil.hidden = false;
           
           const link = document.getElementById('link-siguiente') as HTMLAnchorElement;
@@ -90,15 +88,9 @@ const testUrl = unirRuta(import.meta.env.BASE_URL, 'test/');
             etiqueta.textContent = `Siguiente en la ${datoSiguiente.lineaNombre}:`;
             nombreEstacion.textContent = datoSiguiente.nombre;
           }
-        }
-      } else if (!perfil) {
-        // No tiene perfil, invitarlo a hacer el test
-        if (divSinPerfil) {
-          divSinPerfil.hidden = false;
-        }
-      } else {
-        // Tiene perfil pero no hay siguiente estación (llegó al final de su línea)
-        if (divConPerfil) {
+        } else if (!datoSiguiente && divConPerfil) {
+          // Tiene perfil pero llegó al final
+          contenedor.hidden = false;
           divConPerfil.hidden = false;
           const link = document.getElementById('link-siguiente');
           if (link) link.hidden = true;
@@ -110,6 +102,13 @@ const testUrl = unirRuta(import.meta.env.BASE_URL, 'test/');
             msj.textContent = 'Terminaste todas las estaciones recomendadas para tu perfil. Podés volver al mapa para explorar las demás estaciones libremente.';
             divConPerfil.appendChild(msj);
           }
+        }
+      } else {
+        // No tiene perfil. No ocultamos el markdown estático, 
+        // simplemente mostramos el cartelito invitando a hacer el test abajo.
+        contenedor.hidden = false;
+        if (divSinPerfil) {
+          divSinPerfil.hidden = false;
         }
       }
     }
