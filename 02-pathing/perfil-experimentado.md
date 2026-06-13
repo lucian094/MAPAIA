@@ -104,12 +104,33 @@ En el sitio, esta es tu 🔵 línea en el mapa. En orden:
 2. **[El ecosistema de herramientas](../01-fundamentos/ecosistema.md)** —
    los criterios de elección pensados para tu caso: presupuesto, privacidad
    y, sobre todo, encaje con el flujo que ya tenés.
+3. **[Contexto y estructura](../03-practica/contexto-y-estructura.md)** — la
+   palanca más grande para tu perfil: convertir las convenciones de tu
+   proyecto en instrucciones que el agente respete. Incluye los ADRs, para
+   registrar el porqué de las decisiones. Ahí tu experiencia se vuelve
+   ventaja competitiva.
+4. **[Economía de contexto y tokens](../03-practica/economia-de-contexto.md)**
+   — cómo darle el contexto justo y elegir el modelo según la tarea; eficiencia
+   que ya intuís, ahora explícita.
+5. **[Flujos de trabajo](../03-practica/flujos-de-trabajo.md)** — cómo
+   integrar el agente a los workflows que ya tenés aceitados, empezando por
+   las tareas de bajo riesgo.
+6. **[Método: spec-first y TDD](../03-practica/metodo-spec-first-y-tdd.md)** —
+   probablemente ya trabajás así; acá está nombrado y aplicado al agente, listo
+   para defenderlo ante el equipo.
 
-Las siguientes estaciones de tu línea llegan con la sección de práctica (en
-construcción) — para tu perfil, la palanca más grande van a ser los archivos
-de contexto: convertir las convenciones de tu proyecto en instrucciones que
-el agente respete. Ahí es donde tu experiencia se vuelve ventaja
-competitiva.
+(Tres temas quedan fuera de tu ruta porque ya los dominás, pero ahí los tenés
+si querés: la intro de [ingeniería de prompts](../03-practica/ingenieria-de-prompts.md)
+—ya sabés pedir—, y [arquitectura](../03-practica/arquitectura.md) y
+[patrones de diseño](../03-practica/patrones-de-diseno.md), con el porqué a mano
+para defenderlos ante el equipo.)
+
+Y ahora sí, la sección de extensibilidad ya está publicada y cierra tu ruta:
+**[MCP](../04-extensibilidad/mcp.md)** para enchufar el agente a tus
+herramientas internas, **[skills](../04-extensibilidad/skills.md)** para
+escribir tus procedimientos una vez, y
+**[plugins](../04-extensibilidad/plugins.md)** para empaquetarlos y repartirlos
+al equipo. Es donde tu experiencia configurando entornos rinde directo.
 
 ## Proponete una prueba piloto (con fecha de fin)
 

@@ -125,4 +125,42 @@ const base = import.meta.env.BASE_URL;
   .articulo img {
     max-width: 100%;
   }
+
+  /* Tooltips de glosario: el plugin remark-glosario envuelve la 1ª aparición
+     de cada término en un <a class="glosario-termino" data-definicion>. El
+     link al glosario es el fallback accesible; el tooltip es CSS puro. */
+  .articulo .glosario-termino {
+    color: var(--text);
+    text-decoration: underline dotted var(--accent);
+    text-underline-offset: 2px;
+    cursor: help;
+    position: relative;
+  }
+
+  .articulo .glosario-termino::after {
+    content: attr(data-definicion);
+    position: absolute;
+    left: 0;
+    bottom: 125%;
+    z-index: 5;
+    width: max-content;
+    max-width: min(22rem, 80vw);
+    padding: 0.5rem 0.7rem;
+    background: var(--surface);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 0.4rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+  }
+
+  .articulo .glosario-termino:hover::after,
+  .articulo .glosario-termino:focus::after {
+    opacity: 1;
+    visibility: visible;
+  }
 </style>

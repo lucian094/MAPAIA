@@ -2,7 +2,9 @@
 import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
 import Articulo from '../layouts/Articulo.astro';
+import ProgresoArticulo from '../components/ProgresoArticulo.astro';
 import { extraerTitulo, nombreSeccion } from '../lib/contenido';
+import { ESTACIONES } from '../data/mapa';
 
 export async function getStaticPaths() {
   const entradas = await getCollection('contenido');
@@ -20,8 +22,10 @@ const { entrada } = Astro.props;
 const { Content } = await render(entrada);
 const titulo = extraerTitulo(entrada.body ?? '') ?? entrada.id;
 const seccion = nombreSeccion(entrada.id.split('/')[0] ?? '');
+const estacion = ESTACIONES.find((e) => e.articulo === entrada.id);
 ---
 
 <Articulo titulo={titulo} seccion={seccion}>
   <Content />
+  {estacion && <ProgresoArticulo estacionId={estacion.id} nombre={estacion.nombre} />}
 </Articulo>

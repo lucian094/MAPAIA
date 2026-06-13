@@ -26,6 +26,13 @@ const ORDEN_LECTURA = [
   '02-pathing/perfil-inicial',
   '02-pathing/perfil-experimentado',
   '02-pathing/perfil-nativo',
+  '03-practica/ingenieria-de-prompts',
+  '03-practica/contexto-y-estructura',
+  '03-practica/economia-de-contexto',
+  '03-practica/flujos-de-trabajo',
+  '03-practica/metodo-spec-first-y-tdd',
+  '03-practica/arquitectura',
+  '03-practica/patrones-de-diseno',
 ];
 
 export function extraerTitulo(cuerpo: string): string | null {

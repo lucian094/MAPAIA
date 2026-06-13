@@ -65,6 +65,23 @@ el log dice `Complete!`, el build fue exitoso aunque el exit code no sea 0.
 - **El perfil del lector vive en localStorage** detrás de
   `src/lib/perfil.ts` (guards: sin almacenamiento el sitio funciona igual,
   solo que sin línea resaltada). Lo escriben el test y la leyenda del mapa.
+- **El progreso (estaciones visitadas) vive en localStorage** detrás de
+  `src/lib/progreso.ts` (mismo patrón de guards que `perfil.ts`; la parte de
+  avance/logro por línea es pura y testeada). Lo escribe el botón
+  `src/components/ProgresoArticulo.astro` (en cada artículo con estación) y
+  lo lee la isla de `MapaMetro.astro` para pintar visitadas, el conteo por
+  línea y el banner de logro. Las mutaciones emiten un evento `mapaia:progreso`
+  para sincronizar mapa y artículo en la misma pestaña.
+- **El mapa tiene zoom + paneo** (`src/lib/zoom-svg.ts`, lógica pura testeada;
+  isla en `MapaMetro.astro`): botones +/−/reajustar, rueda y arrastre, sobre el
+  `viewBox` del SVG. `03-practica/` tiene 7 temas (se sumaron economía de
+  contexto/tokens y método spec-first/TDD; los ADRs viven en
+  `contexto-y-estructura.md`), por eso el plano quedó ancho.
+- **Tooltips de glosario en build:** `src/lib/remark-glosario.ts` (plugin
+  remark registrado en `astro.config.ts`) envuelve la primera aparición de
+  cada término del glosario, en cada artículo, en un link con tooltip; la
+  detección pura (whole-word, sin tildes, claves sin paréntesis, plurales)
+  vive en `src/lib/glosario-tooltip.ts`. No toca el propio `glosario.md`.
 - **Los ids de la colección conservan la ruta real del `.md`** (sin
   slugificar: `02-pathing/README`, con mayúsculas) vía `generateId` en
   `src/content.config.ts` — los links reescritos dependen de eso y Pages es
@@ -90,4 +107,6 @@ el log dice `Complete!`, el build fue exitoso aunque el exit code no sea 0.
 ## Construcción por fases
 
 El proyecto avanza en 6 fases con stop gates (revisión del autor entre fases).
-Estado: Fase 3 (pathing: contenido de `02-pathing/` + mapa de metro + test de perfil) — ver `.dev/plans/` para el plan vigente.
+Estado: Fase 5 completada (extensibilidad: `04-extensibilidad/` con MCP, skills
+y plugins, sumados al mapa como estaciones en las cuatro líneas). Próxima: Fase
+6 (cierre y verificación global) — ver `.dev/plans/` para los planes.

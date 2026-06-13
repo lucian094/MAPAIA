@@ -1,14 +1,16 @@
 # Perfil explorador: entender los agentes sin escribir código
 
-No programás, y por ahora no está en tus planes. Pero los agentes de IA ya
-te tocan de cerca: trabajás con desarrolladores que los usan, te toca
-evaluar herramientas o aprobar presupuestos, te llegan demos espectaculares
-y titulares apocalípticos en la misma semana — o simplemente querés entender
-de qué se trata todo esto antes de que te lo cuenten mal.
+No programás —o al menos no todavía—. Pero los agentes de IA ya te tocan de
+cerca: trabajás con desarrolladores que los usan, te toca evaluar
+herramientas o aprobar presupuestos, te llegan demos espectaculares y
+titulares apocalípticos en la misma semana, o querés usarlos vos para
+mejorar algo en tu PYME o en un proyecto propio sin depender de nadie.
 
-Esta línea existe para vos. Sin código, sin terminal, sin tarea para el
-hogar: solo el modelo mental y el vocabulario para mirar el tema con ojos
-propios.
+Esta línea arranca para vos: el modelo mental y el vocabulario para mirar el
+tema con ojos propios, sin código ni terminal. Y si te entusiasma, no
+termina ahí — el curso completo queda abierto, y más abajo te muestro cómo
+seguirlo de punta a punta, igual que lo haría alguien que recién empieza a
+programar.
 
 ## El riesgo que esta línea ataca: decidir a ciegas
 
@@ -64,7 +66,10 @@ Esta línea te la da de primera mano.
 
 ## Tu ruta de lectura
 
-En el sitio, esta es tu 🌸 línea en el mapa. En orden:
+Tu línea 🌸 arranca conceptual y, si querés, sigue hasta el final. La pienso
+en dos tramos.
+
+**Tramo 1 — los fundamentos (sin escribir una sola línea de código):**
 
 1. **[Qué son los agentes](../01-fundamentos/que-son-los-agentes.md)** — el
    corazón de tu ruta. Se lee completo sin saber programar: qué es un
@@ -72,17 +77,51 @@ En el sitio, esta es tu 🌸 línea en el mapa. En orden:
    actuar, las limitaciones reales y la evidencia pública. Si solo vas a
    leer un archivo de MAPAIA, que sea este.
 2. **[El ecosistema de herramientas](../01-fundamentos/ecosistema.md)** — el
-   menú que ve tu equipo: qué categorías de herramientas existen, en qué se
-   diferencian y con qué criterios se elige. No vas a instalar ninguna; vas
-   a entender de qué hablan cuando las nombran.
+   menú completo: qué categorías de herramientas existen, en qué se
+   diferencian y con qué criterios se elige. Te sirve para entender de qué
+   hablan cuando las nombran — y, si vas a usar una en tu proyecto, para
+   elegir con cabeza.
 3. **El [glosario](../01-fundamentos/glosario.md), a mano** — tu diccionario
    de bolsillo. En el sitio tiene búsqueda; consultalo cada vez que un
    término te frene.
 
-Tu ruta es deliberadamente más corta que las demás: las secciones de
-práctica y extensibilidad de MAPAIA son técnicas y asumen que escribís
-código. Si algún día querés asomarte igual, nadie te lo impide — todo el
-contenido está a la vista.
+Con esos tres ya tenés el modelo mental y el vocabulario. Para muchos
+exploradores, alcanza y sobra.
+
+**Tramo 2 — la práctica, si vas a usar agentes en serio:**
+
+Si querés aplicarlos de verdad a tu PYME o a un proyecto propio, seguí por
+acá. Las primeras estaciones te sirven aunque no programes; las últimas
+asumen que escribís código, y son tu puente natural el día que decidas
+empezar.
+
+4. **[Ingeniería de prompts](../03-practica/ingenieria-de-prompts.md)** — la
+   habilidad más transferible de todas: pedirle bien a un agente no requiere
+   saber programar, y es la que más te va a rendir desde el día uno.
+5. **[Contexto y estructura](../03-practica/contexto-y-estructura.md)** —
+   cómo dejarle al agente, por escrito, las reglas de tu proyecto.
+6. **[Economía de contexto y tokens](../03-practica/economia-de-contexto.md)**
+   — cómo aprovechar los agentes sin gastar de más; útil tengas o no equipo
+   técnico.
+7. **[Flujos de trabajo](../03-practica/flujos-de-trabajo.md)** — cómo
+   ordenar el trabajo con un agente paso a paso, en lugar de pedirle todo de
+   una.
+8. **[Método: spec-first y TDD](../03-practica/metodo-spec-first-y-tdd.md)** —
+   acá empieza lo más técnico: definir qué querés y verificarlo. Útil de leer
+   aunque la implementación la haga otra persona.
+9. **[Arquitectura](../03-practica/arquitectura.md)** y
+   **[Patrones de diseño](../03-practica/patrones-de-diseno.md)** — el tramo
+   para quien escribe (o va a escribir) código. Tu puente hacia la
+   [Línea Inicial](perfil-inicial.md) si te picó el bicho.
+10. **Extensibilidad** ([MCP](../04-extensibilidad/mcp.md),
+    [skills](../04-extensibilidad/skills.md),
+    [plugins](../04-extensibilidad/plugins.md)) — la cima del puente: cómo se
+    extienden los agentes. Ya es terreno de programador; tomalo como postal de
+    a dónde lleva el camino si decidís cruzar del todo.
+
+Nadie te obliga a recorrerlo entero: cortá donde te deje de servir. Pero el
+camino está completo y a la vista, no detrás de un cartel de "solo para
+programadores".
 
 ## Cómo "probar" un agente sin programar
 

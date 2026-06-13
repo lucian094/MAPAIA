@@ -36,11 +36,19 @@ const nodos = ESTACIONES.map((estacion) => {
 
 <figure class="mapa" id="mapa" data-perfil="">
   <figcaption class="titulo-mapa">El plano de la red</figcaption>
-  <svg
-    viewBox={`0 0 ${ancho} ${alto}`}
-    role="img"
-    aria-label="Mapa de metro de MAPAIA: tres líneas (Inicial, Experimentada y Nativa) que recorren los temas del contenido. Cada estación es un artículo."
-  >
+  <p class="logro" id="logro-mapa" role="status" aria-live="polite" hidden></p>
+  <div class="lienzo">
+    <div class="controles-zoom" role="group" aria-label="Zoom del mapa">
+      <button type="button" data-zoom="menos" aria-label="Alejar">−</button>
+      <button type="button" data-zoom="reset" aria-label="Reajustar la vista">⟲</button>
+      <button type="button" data-zoom="mas" aria-label="Acercar">+</button>
+    </div>
+    <svg
+      id="svg-mapa"
+      viewBox={`0 0 ${ancho} ${alto}`}
+      role="img"
+      aria-label="Mapa de metro de MAPAIA: cuatro líneas (Exploradora, Inicial, Experimentada y Nativa) que recorren los temas del contenido. Cada estación es un artículo."
+    >
     {
       trazos.map((trazo) => (
         <polyline
@@ -53,7 +61,11 @@ const nodos = ESTACIONES.map((estacion) => {
     }
     {
       nodos.map((nodo) => (
-        <a class={`nodo ${nodo.clases}`} href={unirRuta(base, `${nodo.articulo}/`)}>
+        <a
+          class={`nodo ${nodo.clases}`}
+          data-estacion={nodo.id}
+          href={unirRuta(base, `${nodo.articulo}/`)}
+        >
           <title>{nodo.resumen}</title>
           <circle
             class="estacion"
@@ -61,13 +73,20 @@ const nodos = ESTACIONES.map((estacion) => {
             cy={nodo.punto.y}
             r={nodo.esTransbordo ? 11 : 8}
           />
+          <text
+            class="check"
+            x={nodo.punto.x}
+            y={nodo.punto.y}
+            text-anchor="middle"
+            dominant-baseline="central">✓</text>
           <text class="etiqueta" x={nodo.punto.x} y={nodo.punto.y - 20} text-anchor="middle">
             {nodo.nombre}
           </text>
         </a>
       ))
     }
-  </svg>
+    </svg>
+  </div>
   <div class="leyenda" role="group" aria-label="Elegí tu línea">
     {
       LINEAS.map((linea) => (
@@ -77,7 +96,7 @@ const nodos = ESTACIONES.map((estacion) => {
           aria-pressed="false"
           style={`--color-linea: var(${linea.colorVar})`}
         >
-          {linea.nombre}
+          {linea.nombre}<span class="conteo" data-linea-conteo={linea.perfil} />
         </button>
       ))
     }
@@ -90,27 +109,149 @@ const nodos = ESTACIONES.map((estacion) => {
 </figure>
 
 <script>
+  import { LINEAS } from '../data/mapa';
   import { esPerfil, guardarPerfil, leerPerfil, limpiarPerfil } from '../lib/perfil';
+  import { leerVisitadas, lineaCompleta, progresoLinea } from '../lib/progreso';
+  import { paneo, viewBoxInicial, zoom } from '../lib/zoom-svg';
 
   const mapa = document.querySelector<HTMLElement>('#mapa');
   const botones = [...document.querySelectorAll<HTMLButtonElement>('.leyenda button')];
+  const nodos = [...document.querySelectorAll<SVGElement>('.nodo[data-estacion]')];
+  const logro = document.querySelector<HTMLElement>('#logro-mapa');
 
-  function aplicar(perfil: string): void {
+  // --- Resaltado por perfil (elección manual de línea) ---
+  function aplicarPerfil(perfil: string): void {
     mapa?.setAttribute('data-perfil', perfil);
     for (const boton of botones) {
       boton.setAttribute('aria-pressed', String((boton.dataset.linea ?? '') === perfil));
     }
   }
 
-  aplicar(leerPerfil() ?? '');
+  aplicarPerfil(leerPerfil() ?? '');
 
   for (const boton of botones) {
     boton.addEventListener('click', () => {
       const linea = boton.dataset.linea ?? '';
       if (esPerfil(linea)) guardarPerfil(linea);
       else limpiarPerfil();
-      aplicar(linea);
+      aplicarPerfil(linea);
     });
+  }
+
+  // --- Progreso: estaciones visitadas, avance por línea y logro ---
+  function pintarProgreso(): void {
+    const visitadas = leerVisitadas();
+    const set = new Set(visitadas);
+
+    for (const nodo of nodos) {
+      nodo.classList.toggle('visitada', set.has(nodo.dataset.estacion ?? ''));
+    }
+
+    for (const linea of LINEAS) {
+      const span = document.querySelector<HTMLElement>(`[data-linea-conteo="${linea.perfil}"]`);
+      if (!span) continue;
+      const { hechas, total } = progresoLinea(linea.ruta, visitadas);
+      span.textContent = hechas > 0 ? ` · ${hechas}/${total}` : '';
+    }
+
+    if (logro) {
+      const completas = LINEAS.filter((linea) => lineaCompleta(linea.ruta, visitadas));
+      if (completas.length === 0) {
+        logro.hidden = true;
+        logro.textContent = '';
+      } else if (completas.length === 1) {
+        logro.hidden = false;
+        logro.textContent = `🎉 ¡Completaste la ${completas[0]!.nombre}!`;
+      } else {
+        logro.hidden = false;
+        logro.textContent = `🎉 ¡Completaste ${completas.length} líneas: ${completas
+          .map((linea) => linea.nombre)
+          .join(', ')}!`;
+      }
+    }
+  }
+
+  pintarProgreso();
+  // El botón del artículo emite 'mapaia:progreso' en la misma pestaña; 'storage'
+  // cubre los cambios hechos en otra pestaña.
+  window.addEventListener('mapaia:progreso', pintarProgreso);
+  window.addEventListener('storage', pintarProgreso);
+
+  // --- Zoom y paneo: el mapa creció y conviene poder acercarse ---
+  const svg = document.querySelector<SVGSVGElement>('#svg-mapa');
+  if (svg) {
+    const inicial = (svg.getAttribute('viewBox') ?? '0 0 0 0').split(/\s+/).map(Number);
+    const limites = { ancho: inicial[2] ?? 0, alto: inicial[3] ?? 0 };
+    let vb = viewBoxInicial(limites);
+
+    const pintarVb = (): void => {
+      svg.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+    };
+
+    const aContenido = (clientX: number, clientY: number): { x: number; y: number } => {
+      const rect = svg.getBoundingClientRect();
+      return {
+        x: vb.x + ((clientX - rect.left) / rect.width) * vb.w,
+        y: vb.y + ((clientY - rect.top) / rect.height) * vb.h,
+      };
+    };
+
+    const zoomAlCentro = (factor: number): void => {
+      vb = zoom(vb, factor, vb.x + vb.w / 2, vb.y + vb.h / 2, limites);
+      pintarVb();
+    };
+
+    document.querySelector('[data-zoom="mas"]')?.addEventListener('click', () => zoomAlCentro(1.4));
+    document
+      .querySelector('[data-zoom="menos"]')
+      ?.addEventListener('click', () => zoomAlCentro(1 / 1.4));
+    document.querySelector('[data-zoom="reset"]')?.addEventListener('click', () => {
+      vb = viewBoxInicial(limites);
+      pintarVb();
+    });
+
+    svg.addEventListener(
+      'wheel',
+      (evento) => {
+        evento.preventDefault();
+        const centro = aContenido(evento.clientX, evento.clientY);
+        vb = zoom(vb, evento.deltaY < 0 ? 1.15 : 1 / 1.15, centro.x, centro.y, limites);
+        pintarVb();
+      },
+      { passive: false },
+    );
+
+    let arrastrando = false;
+    let prevX = 0;
+    let prevY = 0;
+
+    svg.addEventListener('pointerdown', (evento) => {
+      // Un clic sobre una estación es navegación (link): no arrastrar.
+      if ((evento.target as Element).closest('.nodo')) return;
+      arrastrando = true;
+      prevX = evento.clientX;
+      prevY = evento.clientY;
+      svg.setPointerCapture(evento.pointerId);
+      svg.classList.add('arrastrando');
+    });
+
+    svg.addEventListener('pointermove', (evento) => {
+      if (!arrastrando) return;
+      const rect = svg.getBoundingClientRect();
+      const dx = ((evento.clientX - prevX) / rect.width) * vb.w;
+      const dy = ((evento.clientY - prevY) / rect.height) * vb.h;
+      vb = paneo(vb, -dx, -dy, limites);
+      prevX = evento.clientX;
+      prevY = evento.clientY;
+      pintarVb();
+    });
+
+    const finArrastre = (): void => {
+      arrastrando = false;
+      svg.classList.remove('arrastrando');
+    };
+    svg.addEventListener('pointerup', finArrastre);
+    svg.addEventListener('pointercancel', finArrastre);
   }
 </script>
 
@@ -131,12 +272,49 @@ const nodos = ESTACIONES.map((estacion) => {
     margin-bottom: 0.5rem;
   }
 
+  .lienzo {
+    position: relative;
+  }
+
+  .controles-zoom {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 2;
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .controles-zoom button {
+    width: 2rem;
+    height: 2rem;
+    font: inherit;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.35rem;
+    cursor: pointer;
+  }
+
+  .controles-zoom button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
   svg {
     display: block;
     width: 100%;
     max-width: 42rem;
     height: auto;
     margin: 0 auto;
+    touch-action: none;
+    cursor: grab;
+  }
+
+  svg.arrastrando {
+    cursor: grabbing;
   }
 
   .trazo {
@@ -171,6 +349,25 @@ const nodos = ESTACIONES.map((estacion) => {
   .nodo:hover .estacion,
   .nodo:focus .estacion {
     stroke: var(--accent);
+  }
+
+  /* Estaciones visitadas: relleno ámbar + tilde. */
+  .check {
+    fill: var(--accent-text);
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font-sans);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nodo.visitada .estacion {
+    fill: var(--accent);
+    stroke: var(--accent);
+  }
+
+  .nodo.visitada .check {
+    opacity: 1;
   }
 
   /* Resaltado: la línea elegida a todo color, el resto atenuado. */
@@ -214,6 +411,26 @@ const nodos = ESTACIONES.map((estacion) => {
   .leyenda button[aria-pressed='true'] {
     border-color: var(--accent);
     color: var(--accent);
+  }
+
+  .leyenda .conteo {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .leyenda button[aria-pressed='true'] .conteo {
+    color: var(--accent);
+  }
+
+  .logro {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.85rem;
+    background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+    border: 1px solid var(--accent);
+    border-radius: 0.5rem;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.9rem;
   }
 
   .aviso {

@@ -88,11 +88,31 @@ En el sitio, esta es tu 🟢 línea en el mapa. En orden:
    gratuitas alcanzan de sobra para esta etapa.
 3. **El [glosario](../01-fundamentos/glosario.md), a mano** — no hace falta
    leerlo de corrido: tenelo cerca y consultalo cuando un término te frene.
+4. **[Ingeniería de prompts](../03-practica/ingenieria-de-prompts.md)** — la
+   habilidad que más rinde al principio: pedir bien es la mitad del trabajo.
+5. **[Contexto y estructura](../03-practica/contexto-y-estructura.md)** —
+   cómo dejarle al agente, por escrito, las reglas del proyecto.
+6. **[Economía de contexto y tokens](../03-practica/economia-de-contexto.md)**
+   — el hábito de tareas chicas y contexto justo; barato para tu bolsillo y
+   mejor para tu aprendizaje (seguís el hilo de lo que pasa).
+7. **[Flujos de trabajo](../03-practica/flujos-de-trabajo.md)** — el paso a
+   paso por tipo de tarea; mirá con lupa "revisión de código generado", que
+   es tu músculo en formación.
+8. **[Método: spec-first y TDD](../03-practica/metodo-spec-first-y-tdd.md)** —
+   el andamio que evita que dependas del agente: definí qué querés y verificá
+   con tests, no con fe.
+9. **[Arquitectura](../03-practica/arquitectura.md)** — por qué el código que
+   le sirve al agente es el mismo que te conviene aprender a escribir.
+10. **[Patrones de diseño](../03-practica/patrones-de-diseno.md)** — el
+    vocabulario de soluciones probadas, y cuándo NO usarlas.
 
-Las siguientes estaciones de tu línea llegan con la sección de práctica
-(en construcción): ingeniería de prompts, los flujos de trabajo por tipo de
-tarea y los archivos de contexto. La ruta se va a extender acá mismo cuando
-estén publicadas.
+11. **[MCP](../04-extensibilidad/mcp.md)** — darle al agente herramientas y
+    datos más allá del editor: el protocolo estándar para conectarlo a tu
+    mundo de trabajo.
+12. **[Skills](../04-extensibilidad/skills.md)** — empaquetar procedimientos
+    que el agente carga cuando aplican; criterio tuyo, escrito y reutilizable.
+13. **[Plugins](../04-extensibilidad/plugins.md)** — juntar todo lo anterior y
+    distribuirlo. Te va a servir el día que trabajes en equipo.
 
 ## Mientras tanto: un ejercicio que vale por un curso
 

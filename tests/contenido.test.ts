@@ -67,6 +67,25 @@ describe('compararPorLectura', () => {
     ]);
   });
 
+  it('ordena 03-practica después del pathing, en orden pedagógico', () => {
+    const ids = [
+      '03-practica/patrones-de-diseno',
+      '02-pathing/perfil-nativo',
+      '03-practica/ingenieria-de-prompts',
+      '03-practica/metodo-spec-first-y-tdd',
+      '03-practica/economia-de-contexto',
+      '03-practica/flujos-de-trabajo',
+    ];
+    expect([...ids].sort(compararPorLectura)).toEqual([
+      '02-pathing/perfil-nativo',
+      '03-practica/ingenieria-de-prompts',
+      '03-practica/economia-de-contexto',
+      '03-practica/flujos-de-trabajo',
+      '03-practica/metodo-spec-first-y-tdd',
+      '03-practica/patrones-de-diseno',
+    ]);
+  });
+
   it('los ids desconocidos van después, en orden alfabético', () => {
     const ids = ['02-pathing/zeta', '02-pathing/alfa', '01-fundamentos/glosario'];
     expect([...ids].sort(compararPorLectura)).toEqual([

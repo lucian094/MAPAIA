@@ -105,11 +105,35 @@ En el sitio, esta es tu 🟣 línea en el mapa. En orden:
 2. Los [fundamentos](../01-fundamentos/que-son-los-agentes.md) como repaso
    en diagonal, si hace falta — en particular el vocabulario del
    [glosario](../01-fundamentos/glosario.md), que es el que usa todo MAPAIA.
+3. **[Contexto y estructura](../03-practica/contexto-y-estructura.md)** — el
+   archivo de contexto como pieza central de tu sistema reproducible, y los
+   ADRs como bitácora del porqué de cada decisión.
+4. **[Economía de contexto y tokens](../03-practica/economia-de-contexto.md)**
+   — medible por definición: es donde tu intuición sobre qué gasta y qué rinde
+   se vuelve un dato que podés compartir con el equipo.
+5. **[Flujos de trabajo](../03-practica/flujos-de-trabajo.md)** — leelos con
+   ojo de sistematizador: lo que repetís se convierte en skill o comando.
+6. **[Método: spec-first y TDD](../03-practica/metodo-spec-first-y-tdd.md)** —
+   la disciplina que volvés estándar de equipo, no práctica personal.
 
-Las siguientes estaciones de tu línea llegan con las secciones de práctica y
-de extensibilidad (en construcción): los archivos de contexto y los flujos
-de trabajo con ojo de sistematizador, y después MCP, skills y plugins — el
-tramo central de tu ruta. Se anuncian acá mismo cuando estén publicadas.
+7. **[MCP](../04-extensibilidad/mcp.md)** — el protocolo para conectar el
+   agente a las herramientas y los datos de tu equipo; tu palanca para
+   sistematizar accesos en lugar de improvisarlos.
+8. **[Skills](../04-extensibilidad/skills.md)** — convertir tus procedimientos
+   heroicos en capacidades versionadas que el equipo hereda con un `git pull`.
+9. **[Plugins](../04-extensibilidad/plugins.md)** — empaquetar skills, comandos
+   y MCP en algo instalable: tu flujo deja de vivir en tu cabeza y pasa a ser
+   infraestructura compartida.
+
+Los puntos 7 a 9 son el tramo central de tu ruta —la sección de
+extensibilidad—, y es donde tu perfil más se despega del resto.
+
+(Prompts, arquitectura y patrones no son estación de tu ruta —ya los dominás—,
+pero el ángulo de volverlos estándar de equipo sigue valiendo:
+[prompts](../03-practica/ingenieria-de-prompts.md) versionados,
+[arquitectura](../03-practica/arquitectura.md) y
+[patrones de diseño](../03-practica/patrones-de-diseno.md) como criterio
+compartido, no gusto personal.)
 
 ## Mientras tanto: tres movidas de esta semana
 

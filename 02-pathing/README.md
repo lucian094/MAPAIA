@@ -203,9 +203,9 @@ siguiente. En el sitio podés cambiar la línea resaltada desde el propio
 mapa, sin rehacer el test.
 
 **¿Las rutas van a crecer?**
-Sí. A medida que se publiquen las secciones de práctica y de
-extensibilidad, cada línea suma sus estaciones nuevas — los archivos de
-perfil se actualizan con la ruta extendida, así que tu punto de entrada
+Ya crecieron: las secciones de práctica y de extensibilidad están publicadas
+y cada línea suma sus estaciones. Si a futuro se agregan temas, los archivos
+de perfil se actualizan con la ruta extendida, así que tu punto de entrada
 sigue siendo el mismo.
 
 **¿Por qué cuatro perfiles y no cinco, o diez?**

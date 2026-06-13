@@ -83,3 +83,47 @@ describe('integridad interna del mapa', () => {
     }
   });
 });
+
+describe('diferenciación de líneas', () => {
+  const ruta = (perfil: string) => LINEAS.find((l) => l.perfil === perfil)?.ruta ?? [];
+
+  it('la exploradora llega hasta el final del contenido (como la inicial)', () => {
+    // No es una vía muerta: un no-programador puede recorrer todo el curso.
+    expect(ruta('explorador')).toContain('patrones-de-diseno');
+    expect(ruta('explorador')).toContain('ingenieria-de-prompts');
+  });
+
+  it('la inicial recorre toda la práctica', () => {
+    expect(ruta('inicial')).toContain('ingenieria-de-prompts');
+    expect(ruta('inicial')).toContain('patrones-de-diseno');
+  });
+
+  it('la experimentada saltea prompts y el oficio de software, conserva qué-son', () => {
+    expect(ruta('experimentado')).not.toContain('ingenieria-de-prompts');
+    expect(ruta('experimentado')).not.toContain('arquitectura');
+    expect(ruta('experimentado')).not.toContain('patrones-de-diseno');
+    expect(ruta('experimentado')).toContain('que-son-los-agentes');
+  });
+
+  it('la nativa saltea qué-son, prompts y el oficio de software', () => {
+    expect(ruta('nativo')).not.toContain('que-son-los-agentes');
+    expect(ruta('nativo')).not.toContain('ingenieria-de-prompts');
+    expect(ruta('nativo')).not.toContain('arquitectura');
+    expect(ruta('nativo')).not.toContain('patrones-de-diseno');
+  });
+
+  it('cada línea técnica tiene un conjunto de estaciones distinto', () => {
+    const firmas = ['inicial', 'experimentado', 'nativo'].map((p) =>
+      [...ruta(p)].sort().join('|'),
+    );
+    expect(new Set(firmas).size).toBe(3);
+  });
+
+  it('las cuatro líneas suman la sección de extensibilidad', () => {
+    for (const perfil of ['explorador', 'inicial', 'experimentado', 'nativo']) {
+      expect(ruta(perfil)).toContain('mcp');
+      expect(ruta(perfil)).toContain('skills');
+      expect(ruta(perfil)).toContain('plugins');
+    }
+  });
+});
