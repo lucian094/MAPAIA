@@ -1,0 +1,211 @@
+---
+import { unirRuta } from '../lib/rutas';
+
+export interface DatoSiguiente {
+  url: string;
+  nombre: string;
+  lineaNombre: string;
+  colorVar: string;
+}
+
+interface Props {
+  siguientes: Record<string, DatoSiguiente | null>;
+}
+
+const { siguientes } = Astro.props;
+const testUrl = unirRuta(import.meta.env.BASE_URL, 'test/');
+---
+
+<div id="siguiente-paso-dinamico" data-siguientes={JSON.stringify(siguientes)} data-test-url={testUrl} hidden>
+  <div id="paso-con-perfil" hidden>
+    <h2 id="titulo-siguiente">→ Siguiente paso</h2>
+    <a id="link-siguiente" href="#" class="btn-siguiente">
+      <span class="etiqueta-linea" id="etiqueta-linea"></span>
+      <span class="nombre-estacion" id="nombre-estacion"></span>
+      <span aria-hidden="true" class="flecha">→</span>
+    </a>
+  </div>
+  <div id="paso-sin-perfil" hidden>
+    <div class="invitacion-test">
+      <p>💡 <strong>¿Querés ver tu ruta personalizada?</strong></p>
+      <p>Hacé el test de 2 minutos para descubrir qué perfil sos y cuál es tu próxima parada recomendada.</p>
+      <a href={testUrl} class="btn-test">Hacer el test</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { leerPerfil } from '../lib/perfil';
+
+  const contenedor = document.getElementById('siguiente-paso-dinamico');
+  
+  if (contenedor) {
+    const siguientes = JSON.parse(contenedor.dataset.siguientes || '{}');
+    const perfil = leerPerfil();
+    
+    // Ocultar el "Siguiente paso" estático del Markdown
+    const headers = document.querySelectorAll('.articulo h2');
+    let lastHeader = null;
+    
+    // Buscar el último h2 que contenga "Siguiente paso"
+    for (let i = headers.length - 1; i >= 0; i--) {
+      if (headers[i]?.textContent?.toLowerCase().includes('siguiente paso')) {
+        lastHeader = headers[i];
+        break;
+      }
+    }
+
+    if (lastHeader) {
+      // Ocultar el h2 estático y todo lo que le sigue
+      let nodo: Element | null = lastHeader;
+      while (nodo) {
+        if (nodo.id === 'siguiente-paso-dinamico') {
+          // Si nos topamos con nuestro propio contenedor, dejamos de ocultar
+          break;
+        }
+        (nodo as HTMLElement).style.display = 'none';
+        nodo = nodo.nextElementSibling;
+      }
+
+      // Mostrar nuestro contenedor dinámico
+      contenedor.hidden = false;
+
+      const divConPerfil = document.getElementById('paso-con-perfil');
+      const divSinPerfil = document.getElementById('paso-sin-perfil');
+      
+      const datoSiguiente = perfil ? siguientes[perfil] : null;
+
+      if (perfil && datoSiguiente) {
+        // Tiene perfil y hay una próxima estación en su línea
+        if (divConPerfil) {
+          divConPerfil.hidden = false;
+          
+          const link = document.getElementById('link-siguiente') as HTMLAnchorElement;
+          const etiqueta = document.getElementById('etiqueta-linea');
+          const nombreEstacion = document.getElementById('nombre-estacion');
+          
+          if (link && etiqueta && nombreEstacion) {
+            link.href = datoSiguiente.url;
+            link.style.setProperty('--color-linea', `var(${datoSiguiente.colorVar})`);
+            etiqueta.textContent = `Siguiente en la ${datoSiguiente.lineaNombre}:`;
+            nombreEstacion.textContent = datoSiguiente.nombre;
+          }
+        }
+      } else if (!perfil) {
+        // No tiene perfil, invitarlo a hacer el test
+        if (divSinPerfil) {
+          divSinPerfil.hidden = false;
+        }
+      } else {
+        // Tiene perfil pero no hay siguiente estación (llegó al final de su línea)
+        if (divConPerfil) {
+          divConPerfil.hidden = false;
+          const link = document.getElementById('link-siguiente');
+          if (link) link.hidden = true;
+          
+          const titulo = document.getElementById('titulo-siguiente');
+          if (titulo) {
+            titulo.textContent = '🎉 ¡Llegaste al final de tu ruta!';
+            const msj = document.createElement('p');
+            msj.textContent = 'Terminaste todas las estaciones recomendadas para tu perfil. Podés volver al mapa para explorar las demás estaciones libremente.';
+            divConPerfil.appendChild(msj);
+          }
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  #siguiente-paso-dinamico {
+    margin-top: 3rem;
+  }
+
+  #paso-con-perfil h2 {
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-siguiente {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--color-linea, var(--border));
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-siguiente:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: var(--color-linea, var(--text-muted));
+  }
+
+  .etiqueta-linea {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+
+  .nombre-estacion {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--color-linea, var(--text));
+  }
+
+  .flecha {
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--color-linea, var(--text-muted));
+    transition: transform 0.2s ease;
+  }
+
+  .btn-siguiente:hover .flecha {
+    transform: translate(4px, -50%);
+  }
+
+  .invitacion-test {
+    background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .invitacion-test p {
+    margin: 0 0 0.5rem 0;
+  }
+
+  .invitacion-test p:last-of-type {
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .btn-test {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--accent-text);
+    padding: 0.4rem 1rem;
+    border-radius: 0.35rem;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: opacity 0.15s ease;
+  }
+
+  .btn-test:hover {
+    opacity: 0.9;
+  }
+</style>

@@ -4,7 +4,9 @@ import { getCollection, render } from 'astro:content';
 import Articulo from '../layouts/Articulo.astro';
 import ProgresoArticulo from '../components/ProgresoArticulo.astro';
 import { extraerTitulo, nombreSeccion } from '../lib/contenido';
-import { ESTACIONES } from '../data/mapa';
+import { ESTACIONES, LINEAS } from '../data/mapa';
+import { unirRuta } from '../lib/rutas';
+import SiguientePasoDinamico, { type DatoSiguiente } from '../components/SiguientePasoDinamico.astro';
 
 export async function getStaticPaths() {
   const entradas = await getCollection('contenido');
@@ -23,9 +25,31 @@ const { Content } = await render(entrada);
 const titulo = extraerTitulo(entrada.body ?? '') ?? entrada.id;
 const seccion = nombreSeccion(entrada.id.split('/')[0] ?? '');
 const estacion = ESTACIONES.find((e) => e.articulo === entrada.id);
+
+const siguientes: Record<string, DatoSiguiente | null> = {};
+if (estacion) {
+  for (const linea of LINEAS) {
+    const idx = linea.ruta.indexOf(estacion.id);
+    if (idx !== -1 && idx < linea.ruta.length - 1) {
+      const idSig = linea.ruta[idx + 1];
+      const estSig = ESTACIONES.find((e) => e.id === idSig);
+      if (estSig) {
+        siguientes[linea.perfil] = {
+          nombre: estSig.nombre,
+          url: unirRuta(import.meta.env.BASE_URL, `${estSig.articulo}/`),
+          lineaNombre: linea.nombre,
+          colorVar: linea.colorVar,
+        };
+      }
+    } else if (idx !== -1 && idx === linea.ruta.length - 1) {
+      siguientes[linea.perfil] = null;
+    }
+  }
+}
 ---
 
 <Articulo titulo={titulo} seccion={seccion}>
   <Content />
   {estacion && <ProgresoArticulo estacionId={estacion.id} nombre={estacion.nombre} />}
+  {estacion && <SiguientePasoDinamico siguientes={siguientes} />}
 </Articulo>
