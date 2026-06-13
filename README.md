@@ -3,7 +3,7 @@
 > **M**odelo de **A**dopción **P**rogresiva de **A**gentes de **I**nteligencia **A**rtificial
 
 [![Deploy](https://github.com/lucian094/MAPAIA/actions/workflows/deploy.yml/badge.svg)](https://github.com/lucian094/MAPAIA/actions/workflows/deploy.yml)
-[![Licencia: MIT](https://img.shields.io/badge/Licencia-MIT-yellow.svg)](LICENSE)
+[![Licencia: CC BY-NC 4.0](https://img.shields.io/badge/Licencia-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 **Sitio:** https://lucian094.github.io/MAPAIA/
 
@@ -52,7 +52,20 @@ un mapa de metro donde cada perfil es una línea y cada tema una estación.
 
 ## Licencia y autoría
 
-Contenido y código bajo [licencia MIT](LICENSE) — usalo, copialo y adaptalo
-con atribución.
-
 **Autor:** Luciano Iván Alvarez
+
+MAPAIA se publica con un modelo de **doble licencia** sobre la base de
+[Creative Commons Atribución-NoComercial 4.0 (CC BY-NC 4.0)](LICENSE).
+
+- **Uso gratuito.** El contenido y el código son 100 % gratuitos para
+  estudiantes, desarrolladores individuales y uso personal o educativo.
+  Podés usarlo, copiarlo, adaptarlo y compartirlo libremente, siempre que
+  cites la autoría original (**Luciano Iván Alvarez**) y enlaces a esta
+  licencia.
+- **Uso comercial.** Queda estrictamente prohibido utilizar MAPAIA con fines
+  comerciales o lucrativos sin autorización previa del autor. Esto incluye
+  —entre otros— brindar capacitaciones pagas, consultoría remunerada basada
+  en la metodología, o integrarlo en productos o servicios comerciales.
+
+**Para adquirir una licencia comercial corporativa, contactar al autor:
+`alv.luciano94+mapaia [arroba] gmail [punto] com`.**
